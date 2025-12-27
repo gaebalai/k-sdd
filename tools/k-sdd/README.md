@@ -203,11 +203,11 @@ project/
 
 ## 문서 & 지원
 
-- 커맨드 레퍼런스: [한국어](../../docs/guides/ko/command-reference.md) | [English](../../docs/guides/command-reference.md)
-- 커스터마이즈 가이드: [한국어](../../docs/guides/ko/customization-guide.md) | [English](../../docs/guides/customization-guide.md)
-- 사양 주도 개발 가이드: [한국어](../../docs/guides/ko/spec-driven.md) | [English](../../docs/guides/spec-driven.md)
-- Claude 서브에이전트 가이드: [한국어](../../docs/guides/ko/claude-subagents.md) | [English](../../docs/guides/claude-subagents.md)
-- 마이그레이션 가이드: [한국어](../../docs/guides/ko/migration-guide.md) | [English](../../docs/guides/migration-guide.md)
+- 커맨드 레퍼런스: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/command-reference.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/command-reference.md)
+- 커스터마이즈 가이드: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/customization-guide.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/customization-guide.md)
+- 사양 주도 개발 가이드: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/spec-driven.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/spec-driven.md)
+- Claude 서브에이전트 가이드: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/claude-subagents.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/claude-subagents.md)
+- 마이그레이션 가이드: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/migration-guide.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/migration-guide.md)
 - **[이슈 및 지원](https://github.com/gaebalai/k-sdd/issues)** - 버그 리포트 및 질문
 - **[Kiro IDE](https://kiro.dev)**
 
