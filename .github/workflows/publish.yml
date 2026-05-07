@@ -38,6 +38,20 @@ jobs:
         working-directory: tools/k-sdd
         run: npm test --if-present
 
-      - name: Publish
+      - name: Check if version already published
+        id: version_check
         working-directory: tools/k-sdd
-        run: npm publish
+        run: |
+          LOCAL_VERSION=$(node -p "require('./package.json').version")
+          echo "version=$LOCAL_VERSION" >> "$GITHUB_OUTPUT"
+          if npm view "k-sdd@$LOCAL_VERSION" version > /dev/null 2>&1; then
+            echo "already_published=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::k-sdd@$LOCAL_VERSION is already published. Skipping publish step."
+          else
+            echo "already_published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish
+        if: steps.version_check.outputs.already_published == 'false'
+        working-directory: tools/k-sdd
+        run: npm publish --provenance
