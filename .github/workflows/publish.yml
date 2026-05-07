@@ -3,11 +3,11 @@ name: Publish Package
 on:
   push:
     tags:
-      - 'v*.*.*'  # Trigger on version tags like v1.0.0
+      - "v*.*.*" # Trigger on version tags like v1.0.0
   workflow_dispatch:
 
 permissions:
-  id-token: write  # Required for OIDC
+  id-token: write # Required for OIDC
   contents: read
 
 jobs:
@@ -19,25 +19,25 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
         run: npm install -g npm@latest
-      
+
       - name: Install
-        working-directory: tools/cc-sdd
+        working-directory: tools/k-sdd
         run: npm ci
 
       - name: Build
-        working-directory: tools/cc-sdd
+        working-directory: tools/k-sdd
         run: npm run build --if-present
 
       - name: Test
-        working-directory: tools/cc-sdd
+        working-directory: tools/k-sdd
         run: npm test --if-present
 
       - name: Publish
-        working-directory: tools/cc-sdd
+        working-directory: tools/k-sdd
         run: npm publish

@@ -9,8 +9,9 @@ export const supportedLanguages = [
   'fr',
   'ru',
   'it',
-  'jp',
+  'ja',
   'ar',
+  'el',
 ] as const;
 
 export type SupportedLanguage = (typeof supportedLanguages)[number];

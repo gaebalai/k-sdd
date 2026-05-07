@@ -39,7 +39,7 @@ describe('config store edge cases', () => {
     const dir = await mkTmp();
     const config: UserConfig = {
       agent: 'claude-code',
-      lang: 'ja',
+      lang: 'ko',
       agentLayouts: {
         'claude-code': {
           commandsDir: '.custom'

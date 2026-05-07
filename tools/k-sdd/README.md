@@ -1,226 +1,210 @@
-# k-sdd: Spec-driven development for your team's workflow
+# k-sdd: Long-running spec-driven implementation for AI coding agents
 
-<!-- npm badges -->
 [![npm version](https://img.shields.io/npm/v/k-sdd?logo=npm)](https://www.npmjs.com/package/k-sdd?activeTab=readme)
 [![install size](https://packagephobia.com/badge?p=k-sdd)](https://packagephobia.com/result?p=k-sdd)
-[![license: MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+[![license: MIT](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE)
 
-- Claude Code / Cursor IDE / Gemini CLI / Codex CLI / GitHub Copilot / Qwen Code / Windsurf를 프로토타입 단계에서 프로덕션 사양 기반으로 전환합니다. 요구사항, 설계, 태스크, 프로젝트 메모리를 팀 워크플로우에 맞게 커스터마이즈할 수 있습니다.
+<div align="center" style="margin-bottom: 1rem; font-size: 1.1rem;"><sub>
+English | <a href="./README_ko.md">한국어</a>
+</sub></div>
 
-- **Kiro 호환** — Kiro IDE와 유사한 Spec-Driven / AI-DLC 스타일을 제공하며, 기존 Kiro 사양 문서도 그대로 사용할 수 있습니다.
+**Turn approved specs into long-running autonomous implementation.** One command installs an agentic SDLC workflow as Agent Skills: discovery, requirements, design, tasks, and autonomous implementation with per-task independent review. Works across 8 AI coding agents, with the same 17-skill set on each.
 
-**v1.0.0 기능**
-- ✅ **리뷰하기 쉬운 설계 문서** — 구조화 포맷과 요약 테이블로 리뷰 시간을 5배 단축
-- ✅ **Research 분리** — 조사 메모(Research.md)와 최종 설계(Design.md)를 분리 관리
-- ✅ **품질 게이트** — validate-gap / validate-design / validate-impl 명령으로 코딩 전 통합 문제를 사전 감지
-- ✅ **1회성 커스터마이즈** — 템플릿을 팀 프로세스에 맞게 한 번만 조정하면 모든 에이전트에 동일 적용
-- ✅ **통합 워크플로우** — 7개 에이전트 × 12개 언어에서 동일한 11단계 커맨드 프로세스 공유
+👻 **Kiro-inspired.** Similar spec-driven, agentic SDLC style as Kiro IDE. Existing Kiro specs remain compatible and portable.
 
-> 설치방법이 필요한 경우 [설치](#-설치)로 이동합니다. 
+## What's new in v3.0
 
-Claude Code, Cursor IDE, Gemini CLI, Codex CLI, GitHub Copilot, Qwen Code, Windsurf를 **AI-DLC(AI Driven Development Life Cycle) 기반으로 전환**합니다.
-**AI 네이티브 프로세스 + 최소한의 인간 승인 게이트**: AI가 실행을 주도하고, 인간은 각 단계에서 중요한 판단만 검증합니다.
+k-sdd v3.0 is a rework around Agent Skills and long-running autonomous implementation.
 
-## 🚀 설치
+- **`/kiro-discovery` as the new entry point.** Discovery routes new work into one of: extend an existing spec, implement directly with no spec, create one new spec, decompose into multiple specs, or mixed decomposition. It writes `brief.md` and, when needed, `roadmap.md`, so you can resume a workstream without re-explaining scope.
+- **`/kiro-impl` for long-running autonomous implementation.** Each task gets a fresh implementer running TDD (RED → GREEN) behind a feature flag, an independent reviewer, and an auto-debug pass that investigates root causes in a clean context when the implementer is blocked or the reviewer rejects twice. Learnings from earlier tasks propagate forward via `## Implementation Notes` in `tasks.md`. 1 task per iteration, safe to re-run after interruption.
+- **Boundary-first spec discipline.** `design.md` now includes a File Structure Plan that drives task boundaries. Tasks carry `_Boundary:_` and `_Depends:_` annotations. Review and validation look for boundary violations, not just style issues.
+- **`/kiro-spec-batch` for multi-spec initiatives.** Turn a roadmap into multiple specs in parallel, with cross-spec review to catch contradictions, duplicated responsibilities, and interface mismatches.
+- **Agent Skills across 8 coding agents.** 17 skills per install, loaded on demand (progressive disclosure). Claude Code and Codex are stable; Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, and Antigravity are in beta. No external dependencies; subagents are spawned through each platform's native primitive.
+
+Full skills-mode workflow and `/kiro-impl` internals: [Skill Reference](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/skill-reference.md).
+
+Upgrading from v1.x or v2.x? See the [Migration Guide](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/migration-guide.md#5-v2x-to-v30).
+
+## Why k-sdd?
+
+k-sdd treats the spec as a contract between parts of the system, not a master command document handed to the agent. Code remains the source of truth. Specs make the boundaries between parts of the code explicit so humans and agents can work in parallel without constant synchronization.
+
+The bet: explicit contracts at the right granularity let AI-driven development at team scale move faster, not slower. Agents write the spec, humans approve the contract at phase gates, code is what ships.
+
+Boundaries are not overhead. They are what lets you move freely inside while protecting the outside.
+
+Full rationale, trade-offs, and when-to-use / when-not-to-use: [Why k-sdd? A philosophy note](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/why-k-sdd.md).
+
+## Quick Start
+
 ```bash
-# 기본 설치 (기본값: 영어, Claude Code)
+cd your-project
 npx k-sdd@latest
-
-# 언어 옵션 (기본값: --lang en)
-npx k-sdd@latest --lang ko    # 한국어
-npx k-sdd@latest --lang es    # 스페인어
-...(지원언어: en, ko, ja, zh-TW, zh, es, pt, de, fr, ru, it, ar)
-
-# 에이전트 옵션 (기본값: claude-code / --claude)
-npx k-sdd@latest --claude --lang ko        # Claude Code(11가지 명령, 대응 언어는 임의)
-npx k-sdd@latest --claude-agent --lang ko  # Claude Code Subagents(12가지 명령 + 9 서브에이전트)
-npx k-sdd@latest --cursor --lang ko        # Cursor IDE
-npx k-sdd@latest --gemini --lang ko        # Gemini CLI
-npx k-sdd@latest --codex --lang ko         # Codex CLI
-npx k-sdd@latest --copilot --lang ko       # GitHub Copilot
-npx k-sdd@latest --qwen --lang ko          # Qwen Code
-npx k-sdd@latest --windsurf --lang ko      # Windsurf IDE
-
-# 참고: 참고: @next는 향후 알파/베타 버전용
-```
-## 🌐 지원언어
-
-| 언어 | 코드 |  |
-|------|--------|------|
-| 영어 | `en` | 🇬🇧 |
-| 한국어 | `ko` | 🇰🇷 |
-| 일본어 | `ja` | 🇯🇵 |
-| 중국어 번체 | `zh-TW` | 🇹🇼 |
-| 중국어 간체 | `zh` | 🇨🇳 |
-| 스페인어 | `es` | 🇪🇸 |
-| 포르투칼어 | `pt` | 🇵🇹 |
-| 독일어 | `de` | 🇩🇪 |
-| 프랑스어 | `fr` | 🇫🇷 |
-| 러시아어 | `ru` | 🇷🇺 |
-| 이탈리아어 | `it` | 🇮🇹 |
-| 아랍어 | `ar` | 🇸🇦 |
-
-사용 방법: npx k-sdd@latest --lang <코드>
-
-## ✨ 퀵스타트
-
-### 신규 프로젝트인 경우
-```bash
-# AI 에이전트를 실행하고, 즉시 스펙주도개발(Spec-Driven Development)을 시작
-/kiro:spec-init OAuth로 사용자 인증 시스템 구축           # AI가 구조화된 계획을 생성
-/kiro:spec-requirements auth-system                 # AI가 명확화를 위한 질문
-/kiro:spec-design auth-system                       # 사람이 검증, AI가 설계
-/kiro:spec-tasks auth-system                        # 구현 태스크로 분해
-/kiro:spec-impl auth-system                         # TDD로 실행
-
-![design.md - System Flow Diagram](https://aivibecoding.kr/design-system_flow.png)
-*설계 단계 `design.md`에서의 시스템 플로우 예시*
-
-### 기존 프로젝인 경우 (권장)
-```bash
-# 먼저 프로젝트 컨텍스트를 확립한 뒤 개발을 진행
-/kiro:steering                                      # AI가 기존 프로젝트 컨텍스트를 학습
-
-/kiro:spec-init 기존 인증에 OAuth 추가                  # AI가 확장 계획을 생성
-/kiro:spec-requirements oauth-enhancement           # AI가 명확화를 위한 질문
-/kiro:validate-gap oauth-enhancement                # 옵션: 기존 기능과 요구사항을 분석
-/kiro:spec-design oauth-enhancement                 # 사람이 검증, AI가 설계
-/kiro:validate-design oauth-enhancement             # 옵션: 설계 통합을 검증
-/kiro:spec-tasks oauth-enhancement                  # 구현 태스크로 분해
-/kiro:spec-impl oauth-enhancement                   # TDD로 실행
 ```
 
-**30초 셋업** → **AI 구동 ‘볼트’(스프린트가 아니라)** → **시간 단위 결과**
+The default installs **Claude Code Skills** with English docs. To pick another agent or language:
 
-### k-sdd를 선택하는 이유
-1. **사양이 단일 정보원(Single Source of Truth)**: 요구사항, 설계, 태스크, Supporting References까지 한 세트로 정리되어 승인 속도가 빨라집니다.
-2. **Greenfield / Brownfield 모두 대응**: 신규 기능은 minutes 단위로 시작, 기존 시스템은 validate 계열 커맨드와 Project Memory로 안전하게 확장합니다.
-3. **여러 에이전트를 동시에 활용**: Claude / Cursor / Codex / Gemini / Copilot / Qwen / Windsurf가 동일한 템플릿/룰을 공유합니다.
-4. **커스터마이즈는 한 번만**: `.kiro/settings/templates/`와 `.kiro/settings/rules/`를 수정하면 모든 에이전트에 즉시 반영됩니다.
-
-## 주요 기능
-
-- **AI-DLC 방식**: 사람 승인 포함 AI 네이티브 프로세스입니다. 코어 패턴: AI 실행, 사람 검증
-- **사양 우선 개발(Spec-First)**: 포괄적 사양을 단일 정보원으로 삼아 라이프사이클 전체를 구동
-- **‘볼트’(스프린트가 아니라)**: [AI-DLC](https://aws.amazon.com/ko/blogs/tech/ai-driven-development-life-cycle/)로 주 단위 스프린트를 대체하는 시간/일 단위 집중 사이클입니다. 관리 오버헤드 70%에서 탈출
-- **영속적 프로젝트 메모리**: AI가 스티어링 문서를 통해 모든 세션에 걸쳐 포괄적 컨텍스트(아키텍처, 패턴, 룰, 도메인 지식)를 유지
-- **템플릿 유연성**: `{{KIRO_DIR}}/settings/templates`（steering / requirements / design / tasks）를 팀 문서 형식에 맞게 커스터마이즈 가능
-- **AI 네이티브 + 사람 게이트**: AI 계획 → AI 질문 → 사람 검증 → AI 구현(품질 관리 포함 고속 사이클)
-- **팀 대응**: 품질 게이트 포함 12개 언어 대응의 크로스플랫폼 표준 워크플로우
-
-## 지원 AI 에이전트
-
-| 에이전트 | 상태 | 커맨드 수 |
-|-------|--------|----------|
-| **Claude Code** | ✅ 완전 지원 | 11개 슬래시 커맨드 |
-| **Claude Code Subagents** | ✅ 완전 지원 | 12개 커맨드 + 9개 서브에이전트 |
-| **Cursor IDE** | ✅ 완전 지원 | 11개 커맨드 |
-| **Gemini CLI** | ✅ 완전 지원 | 11개 커맨드 |
-| **Codex CLI** | ✅ 완전 지원 | 11개 프롬프트 |
-| **GitHub Copilot** | ✅ 완전 지원 | 11개 프롬프트 |
-| **Qwen Code** | ✅ 완전 지원 | 11개 커맨드 |
-| **Windsurf IDE** | ✅ 완전 지원 | 11개 워크플로우 |
-| 기타(Factory AI Droid) | 예정 | - |
-
-## 커맨드
-
-### 사양 기반 개발 워크플로우(Specs)
 ```bash
-/kiro:spec-init <description>             # 기능 사양을 초기화
-/kiro:spec-requirements <feature_name>    # 요구사항을 생성
-/kiro:spec-design <feature_name>          # 기술 설계를 작성
-/kiro:spec-tasks <feature_name>           # 구현 태스크로 분해
-/kiro:spec-impl <feature_name> <tasks>    # TDD로 실행
-/kiro:spec-status <feature_name>          # 진행 상황을 확인
-```
-> **사양을 기반으로**: [Kiro의 사양기반방식](https://kiro.dev/docs/specs/)에 기반: 사양이 애드혹 개발을 체계적인 워크플로우로 변환하고, 명확한 AI-사람 협업 포인트를 통해 아이디어에서 구현까지 연결합니다.
-
-> **Kiro IDE통합**: 생성된 사양은[Kiro IDE](https://kiro.dev)에서 사용/구현도 가능: 강화된 구현 가드레일과 팀 협업 기능을 활용할 수 있습니다.
-
-### 기존 코드에 대한 품질 향상(옵션 - 브라운필드 개발)
-```bash
-# spec-design 전(기존 기능과 요구사항 분석):
-/kiro:validate-gap <feature_name>         # 기존 기능과 요구사항의 갭을 분석
-
-# spec-design 후(기존 시스템과의 설계 검증):
-/kiro:validate-design <feature_name>      # 기존 아키텍처와의 설계 호환성을 리뷰
+npx k-sdd@latest --codex-skills --lang ko      # Codex, Korean
+npx k-sdd@latest --cursor-skills --lang zh-TW  # Cursor IDE, Traditional Chinese
 ```
 
-> **브라운필드 개발용 옵션**: `validate-gap`은 기존과 필요한 기능을 분석하고, `validate-design`은 통합 호환성을 확인합니다. 둘 다 기존 시스템을 위한 옵션 품질 게이트입니다.
+Supports 8 AI coding agents (Claude Code and Codex stable; Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, and Antigravity in beta) and 13 languages. See [Supported Agents](#supported-agents) for the full list.
 
-### 프로젝트 메모리와 컨텍스트(필수)
+Then, in your agent:
+
 ```bash
-/kiro:steering                            # 프로젝트 메모리와 컨텍스트를 생성/갱신
-/kiro:steering-custom                     # 전문 도메인 지식을 추가
+/kiro-discovery <idea>
 ```
 
-> **중요한 기반 커맨드**: 스티어링은 영속적 프로젝트 메모리를 생성 - AI가 모든 세션에서 사용하는 컨텍스트, 룰, 아키텍처. 기존 프로젝트에서는 **먼저 실행하면 사양 품질**이 극적으로 향상됩니다. 
+Not sure where to start? Start with `kiro-discovery`. It routes your request and tells you what command to run next.
 
-## 커스터마이즈
+### Common workflows
 
-`{{KIRO_DIR}}/settings/templates/`의 템플릿을 편집해 워크플로우에 맞출 수 있습니다. 코어 구조(요구사항 번호, 체크박스, 헤딩)는 유지하면서 팀 컨텍스트를 추가하면 — AI가 자동으로 적응합니다.
+| You want to...                            | Skills mode                                                                                                                                  |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Start a new feature or product-sized idea | `kiro-discovery` → `kiro-spec-init` → `kiro-spec-requirements` → `kiro-spec-design` → `kiro-spec-tasks` → `kiro-impl`                        |
+| Extend an existing system                 | `kiro-steering` → `kiro-discovery` or `kiro-spec-init` → optional `kiro-validate-gap` → `kiro-spec-design` → `kiro-spec-tasks` → `kiro-impl` |
+| Break down a large initiative             | `kiro-discovery` → `kiro-spec-batch`                                                                                                         |
+| Implement a small change with no spec     | `kiro-discovery` → direct implementation                                                                                                     |
 
-**자주 하는 커스터마이즈**:
-- **PRD 스타일 요구사항**: 비즈니스 컨텍스트와 성공 지표 포함
-- **프론트엔드/백엔드 설계**: React 컴포넌트나 엔드포인트 사양에 최적화
-- **승인 게이트**: 보안, 아키텍처, 컴플라이언스 리뷰용
-- **JIRA/Linear 대응 태스크**: 견적, 우선순위, 라벨 포함
-- **도메인 스티어링**: - API 표준, 테스트 규약, 코딩 가이드라인
+Legacy `/kiro:*` command modes are still available (`--claude`, `--cursor`, etc.) but are deprecated. See the [Migration Guide](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/migration-guide.md) for the upgrade path.
 
-📖 **[커스터마이즈 가이드](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/customization-guide.md)** — 7가지 실전 예시와 복붙 가능한 스니펫
+For larger approved task sets, run `kiro-impl` to start autonomous implementation with per-task subagent spawn, independent review, and auto-debug on failure.
 
-## 설정
+## See It In Action
+
+Example: build a new Photo Albums feature.
 
 ```bash
-# 언어와 플랫폼
-npx k-sdd@latest --lang ko            # macOS / Linux / Windows(자동 감지)
-npx k-sdd@latest --lang ko --os mac   # 레거시 플래그로서 선택 지정 가능
+/kiro-discovery Photo albums with upload, tagging, and sharing
+# discovery writes brief.md (and roadmap.md when multi-spec) and suggests the next command
+/kiro-spec-init photo-albums
+/kiro-spec-requirements photo-albums
+/kiro-spec-design photo-albums
+/kiro-spec-tasks photo-albums
+/kiro-impl photo-albums
+# autonomous: fresh implementer, independent reviewer, and auto-debug per task
+```
 
-# 안전한 작업
+Typical spec outputs (under 10 minutes):
+
+- `requirements.md`: EARS-format requirements with acceptance criteria.
+- `design.md`: architecture with Mermaid diagrams and a File Structure Plan.
+- `tasks.md`: implementation tasks with boundaries and dependency annotations.
+
+Then `/kiro-impl` runs the tasks autonomously with TDD (RED → GREEN) behind feature flags, an independent reviewer pass, and auto-debug on failure.
+
+## Supported Agents
+
+All 8 skills variants ship the same 17-skill set. The difference is how much real-world usage each platform integration has seen.
+
+| Agent              | Skills mode         | Stability           | Legacy mode                                    |
+| ------------------ | ------------------- | ------------------- | ---------------------------------------------- |
+| **Claude Code**    | `--claude-skills`   | Stable              | `--claude` / `--claude-agent` (deprecated)     |
+| **Codex**          | `--codex-skills`    | Stable              | `--codex` (blocked)                            |
+| **Cursor IDE**     | `--cursor-skills`   | Beta                | `--cursor` (deprecated)                        |
+| **GitHub Copilot** | `--copilot-skills`  | Beta                | `--copilot` (deprecated)                       |
+| **Windsurf IDE**   | `--windsurf-skills` | Beta                | `--windsurf` (deprecated)                      |
+| **OpenCode**       | `--opencode-skills` | Beta                | `--opencode` / `--opencode-agent` (deprecated) |
+| **Gemini CLI**     | `--gemini-skills`   | Beta                | `--gemini` (deprecated)                        |
+| **Antigravity**    | `--antigravity`     | Beta (experimental) | —                                              |
+| **Qwen Code**      | —                   | —                   | `--qwen`                                       |
+
+"Beta" does not mean "missing features", the 17 skills and templates are identical across all 8 platforms. It means the platform integration (subagent spawn behavior, ergonomics, `SKILL.md` loading) has had less real-world usage than Claude Code and Codex, and edge cases may still surface. Please [report issues](https://github.com/gaebalai/k-sdd/issues) if you hit any.
+
+## Installation details
+
+### Language
+
+```bash
+npx k-sdd@latest --lang ko    # Korean
+npx k-sdd@latest --lang zh-TW # Traditional Chinese
+npx k-sdd@latest --lang es    # Spanish
+# Supports: en, ko, zh-TW, zh, es, pt, de, fr, ru, it, ja, ar, el
+```
+
+### Legacy modes (deprecated)
+
+```bash
+npx k-sdd@latest --claude        # Claude Code commands (use --claude-skills)
+npx k-sdd@latest --claude-agent  # Claude Code subagents (use --claude-skills)
+npx k-sdd@latest --cursor        # Cursor IDE commands (use --cursor-skills)
+npx k-sdd@latest --copilot       # GitHub Copilot prompts (use --copilot-skills)
+npx k-sdd@latest --windsurf      # Windsurf IDE workflows (use --windsurf-skills)
+npx k-sdd@latest --opencode      # OpenCode commands (use --opencode-skills)
+npx k-sdd@latest --gemini        # Gemini CLI commands (use --gemini-skills)
+npx k-sdd@latest --qwen          # Qwen Code
+```
+
+### Advanced options
+
+```bash
+# Preview changes before applying
 npx k-sdd@latest --dry-run --backup
 
-# 커스텀 디렉터리
+# Custom specs directory
 npx k-sdd@latest --kiro-dir docs
 ```
 
-## 프로젝트 구조
+## Customization
 
-설치 후 프로젝트에 아래가 추가됩니다:
+Edit templates and rules in `{{KIRO_DIR}}/settings/` to match your team's workflow.
+
+- `templates/`: document structure for requirements, design, tasks.
+- `rules/`: AI generation principles and judgment criteria.
+
+Common use cases: PRD-style requirements, API and database schemas, approval gates, JIRA integration, domain-specific standards.
+
+[Customization Guide](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/customization-guide.md) has practical examples with copy-paste snippets.
+
+## Project structure
+
+After installation, your project gets:
 
 ```
 project/
-├── .claude/commands/kiro/    # 11개 슬래시 커맨드
-├── .codex/prompts/           # 11개 프롬프트 커맨드(Codex CLI)
-├── .github/prompts/          # 11개 프롬프트 커맨드(GitHub Copilot)
-├── .windsurf/workflows/      # 11개 워크플로우 파일(Windsurf IDE)
-├── .kiro/settings/           # 공통 룰과 템플릿({{KIRO_DIR}} 확장)
-├── .kiro/specs/              # 기능 사양서
-├── .kiro/steering/           # AI 가이드 룰
-└── CLAUDE.md (Claude Code)   # 프로젝트 설정
+# Skills mode (recommended): one of the following is installed
+├── .claude/skills/           # 17 skills (Claude Code Skills, default)
+├── .agents/skills/           # 17 skills (Codex Skills)
+├── .cursor/skills/           # 17 skills (Cursor Skills)
+├── .github/skills/           # 17 skills (GitHub Copilot Skills)
+├── .windsurf/skills/         # 17 skills (Windsurf Skills)
+├── .opencode/skills/         # 17 skills (OpenCode Skills)
+├── .gemini/skills/           # 17 skills (Gemini CLI Skills)
+├── .agent/skills/            # 17 skills (Antigravity Skills)
+# Legacy command modes (deprecated)
+├── .claude/commands/kiro/    # 11 slash commands (--claude)
+├── .github/prompts/          # 11 prompt commands (--copilot)
+├── .windsurf/workflows/      # 11 workflow files (--windsurf)
+# Shared project memory and spec state
+├── .kiro/settings/templates/ # Shared templates (variables resolved with {{KIRO_DIR}})
+├── .kiro/settings/rules/     # Shared rules (used by non-skills agents)
+├── .kiro/specs/              # Feature specifications
+├── .kiro/steering/           # AI guidance documents
+└── CLAUDE.md / AGENTS.md     # Project configuration (per agent)
 ```
 
-> 참고: 실제로 생성되는 것은 설치한 에이전트에 해당하는 디렉터리만입니다. 위 트리는 모든 에이전트 기준 예시입니다.
+Only the directories for the agent(s) you install are created. The tree above shows the full superset for reference.
 
-## 문서 & 지원
+## Documentation
 
-- 커맨드 레퍼런스: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/command-reference.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/command-reference.md)
-- 커스터마이즈 가이드: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/customization-guide.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/customization-guide.md)
-- 사양 주도 개발 가이드: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/spec-driven.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/spec-driven.md)
-- Claude 서브에이전트 가이드: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/claude-subagents.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/claude-subagents.md)
-- 마이그레이션 가이드: [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/migration-guide.md) | [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/migration-guide.md)
-- **[이슈 및 지원](https://github.com/gaebalai/k-sdd/issues)** - 버그 리포트 및 질문
-- **[Kiro IDE](https://kiro.dev)**
+- Skill Reference: [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/skill-reference.md) | [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/skill-reference.md)
+- Command Reference: [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/command-reference.md) | [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/command-reference.md)
+- Customization Guide: [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/customization-guide.md) | [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/customization-guide.md)
+- Spec-Driven Guide: [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/spec-driven.md) | [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/spec-driven.md)
+- Why k-sdd?: [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/why-k-sdd.md) | [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/why-k-sdd.md)
+- Claude Subagents Guide: [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/claude-subagents.md) | [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/claude-subagents.md)
+- Migration Guide: [English](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/migration-guide.md) | [한국어](https://github.com/gaebalai/k-sdd/blob/main/docs/guides/ko/migration-guide.md)
+- [Issues & Support](https://github.com/gaebalai/k-sdd/issues) for bug reports and questions
+- [Kiro IDE](https://kiro.dev)
 
 ---
 
-**안정판 릴리스 v1.0.0** - 프로덕션 환경 대응. [문제보고](https://github.com/gaebalai/k-sdd/issues) | MIT License
+**Stable Release v3.0.0.** Production-ready. [Report issues](https://github.com/gaebalai/k-sdd/issues) | MIT License
 
-### 플랫폼 지원
-- 지원 OS: macOS / Linux / Windows(통상 자동 감지).
-- 모든 OS에 대해 통합 커맨드 템플릿을 제공합니다. `--os` 지정은 하위 호환을 위한 선택 옵션입니다.
+### Platform support
 
-> **참고:** `--os`플래그를 지정해도 동작하지만, 현재는 전 플랫폼 공통 템플릿이 전개됩니다.
-
-## License
-
-MIT License
+- Supported OS: macOS, Linux, Windows (auto-detected by default).
+- Unified command templates across operating systems; `--os` override is optional for legacy automation.

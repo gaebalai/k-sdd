@@ -43,6 +43,7 @@ describe('parseArgs', () => {
     expect(parseArgs(['--claude-code']).agent).toBe('claude-code');
     expect(parseArgs(['--claude-agent']).agent).toBe('claude-code-agent');
     expect(parseArgs(['--claude-code-agent']).agent).toBe('claude-code-agent');
+    expect(parseArgs(['--codex-skills']).agent).toBe('codex-skills');
     expect(parseArgs(['--windsurf']).agent).toBe('windsurf');
 
     expect(() => parseArgs(['--agent', 'qwen-code', '--gemini-cli'])).toThrowError(/agent.*conflict/i);
@@ -51,7 +52,7 @@ describe('parseArgs', () => {
 
   it('validates enum values for os/lang/overwrite/agent', () => {
     expect(() => parseArgs(['--os', 'macos'])).toThrowError(/os.*invalid/i);
-    expect(() => parseArgs(['--lang', 'kr'])).toThrowError(/lang.*invalid/i);
+    expect(() => parseArgs(['--lang', 'jp'])).toThrowError(/lang.*invalid/i);
     expect(() => parseArgs(['--overwrite', 'replace'])).toThrowError(/overwrite.*invalid/i);
     expect(() => parseArgs(['--agent', 'unknown'])).toThrowError(/agent.*invalid/i);
   });

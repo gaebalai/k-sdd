@@ -79,16 +79,16 @@ graph TB
 
 ### Technology Stack
 
-| Layer | Choice / Version | Role in Feature | Notes |
-|-------|------------------|-----------------|-------|
-| Backend / Services | FastAPI 0.115+ | API endpoints, request processing, SSE streaming | Async/await support, Pydantic type safety, automatic OpenAPI documentation |
-| Backend / Services | Uvicorn 0.32+ | ASGI server | FastAPI runtime environment, high-speed asynchronous processing |
-| Backend / Services | sse-starlette 2.2+ | SSE implementation | W3C compliant, provides EventSourceResponse |
-| Data / Storage | Pinecone(initial) / Qdrant(alternative) | Vector database | Semantic search, scalability |
-| External API | OpenAI text-embedding-3-small | Embedding generation | Cost efficiency priority, $0.02/million tokens |
-| External API | OpenAI GPT-4o / GPT-4o-mini | LLM response generation | Streaming support, high accuracy response generation |
-| Infrastructure / Runtime | Python 3.11+ | Runtime environment | Async/await optimization, enhanced type hints |
-| Infrastructure / Runtime | Docker | Containerization | Environment consistency, deployment simplification |
+| Layer                    | Choice / Version                        | Role in Feature                                  | Notes                                                                      |
+| ------------------------ | --------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------- |
+| Backend / Services       | FastAPI 0.115+                          | API endpoints, request processing, SSE streaming | Async/await support, Pydantic type safety, automatic OpenAPI documentation |
+| Backend / Services       | Uvicorn 0.32+                           | ASGI server                                      | FastAPI runtime environment, high-speed asynchronous processing            |
+| Backend / Services       | sse-starlette 2.2+                      | SSE implementation                               | W3C compliant, provides EventSourceResponse                                |
+| Data / Storage           | Pinecone(initial) / Qdrant(alternative) | Vector database                                  | Semantic search, scalability                                               |
+| External API             | OpenAI text-embedding-3-small           | Embedding generation                             | Cost efficiency priority, $0.02/million tokens                             |
+| External API             | OpenAI GPT-4o / GPT-4o-mini             | LLM response generation                          | Streaming support, high accuracy response generation                       |
+| Infrastructure / Runtime | Python 3.11+                            | Runtime environment                              | Async/await optimization, enhanced type hints                              |
+| Infrastructure / Runtime | Docker                                  | Containerization                                 | Environment consistency, deployment simplification                         |
 
 **Technology Selection Rationale**:
 
@@ -197,40 +197,40 @@ flowchart TB
 
 ## Requirements Traceability
 
-| Requirement | Summary | Components | Interfaces | Flows |
-|-------------|---------|------------|------------|-------|
-| 1 | Inquiry Reception API | API Gateway, InquiryEndpoint | POST /api/inquiries | Primary Flow |
-| 2 | Document Search Feature | Embedding Service, Document Retriever, Vector Database | EmbeddingService, RetrieverService | Primary Flow |
-| 3 | Streaming Response Generation | Response Generator, LLM Service, SSE Handler | GeneratorService, SSE Events | Primary Flow |
-| 4 | Context Management | RAG Orchestrator, Prompt Builder | OrchestratorService | Primary Flow |
-| 5 | Error Handling and Resilience | Circuit Breaker, Retry Manager, Error Handler | ErrorHandlerService | Error Handling Flow |
-| 6 | Performance and Scalability | Connection Pool, Async Handlers | Health Check Endpoint | - |
-| 7 | Security and Data Protection | Authentication Middleware, Input Validator | Auth Middleware | - |
-| 8 | Monitoring and Observability | Metrics Collector, Structured Logger | Metrics Endpoint | - |
+| Requirement | Summary                       | Components                                             | Interfaces                         | Flows               |
+| ----------- | ----------------------------- | ------------------------------------------------------ | ---------------------------------- | ------------------- |
+| 1           | Inquiry Reception API         | API Gateway, InquiryEndpoint                           | POST /api/inquiries                | Primary Flow        |
+| 2           | Document Search Feature       | Embedding Service, Document Retriever, Vector Database | EmbeddingService, RetrieverService | Primary Flow        |
+| 3           | Streaming Response Generation | Response Generator, LLM Service, SSE Handler           | GeneratorService, SSE Events       | Primary Flow        |
+| 4           | Context Management            | RAG Orchestrator, Prompt Builder                       | OrchestratorService                | Primary Flow        |
+| 5           | Error Handling and Resilience | Circuit Breaker, Retry Manager, Error Handler          | ErrorHandlerService                | Error Handling Flow |
+| 6           | Performance and Scalability   | Connection Pool, Async Handlers                        | Health Check Endpoint              | -                   |
+| 7           | Security and Data Protection  | Authentication Middleware, Input Validator             | Auth Middleware                    | -                   |
+| 8           | Monitoring and Observability  | Metrics Collector, Structured Logger                   | Metrics Endpoint                   | -                   |
 
 ## Components and Interfaces
 
 ### Component Summary
 
-| Component | Domain/Layer | Intent | Req Coverage | Key Dependencies (Criticality) | Contracts |
-|-----------|--------------|--------|--------------|--------------------------------|-----------|
-| InquiryEndpoint | API Layer | Inquiry request reception and SSE streaming | 1, 3, 7 | RAG Orchestrator (P0), Auth Middleware (P0) | API, SSE |
-| RAG Orchestrator | Orchestration | RAG flow control and error handling | 4, 5 | Embedding Service (P0), Document Retriever (P0), Response Generator (P0) | Service |
-| Embedding Service | Integration | Text vectorization | 2 | OpenAI Embeddings API (P0) | Service |
-| Document Retriever | Retrieval | Vector search and ranking | 2 | Vector Database (P0) | Service |
-| Response Generator | Generation | LLM response generation and streaming | 3, 4 | OpenAI LLM API (P0) | Service, Event |
-| Auth Middleware | Security | Authentication and authorization | 7 | - | API Middleware |
-| Metrics Collector | Observability | Metrics collection and publication | 8 | - | API |
-| Health Check Service | Observability | Health check | 6, 8 | All External Services (P1) | API |
+| Component            | Domain/Layer  | Intent                                      | Req Coverage | Key Dependencies (Criticality)                                           | Contracts      |
+| -------------------- | ------------- | ------------------------------------------- | ------------ | ------------------------------------------------------------------------ | -------------- |
+| InquiryEndpoint      | API Layer     | Inquiry request reception and SSE streaming | 1, 3, 7      | RAG Orchestrator (P0), Auth Middleware (P0)                              | API, SSE       |
+| RAG Orchestrator     | Orchestration | RAG flow control and error handling         | 4, 5         | Embedding Service (P0), Document Retriever (P0), Response Generator (P0) | Service        |
+| Embedding Service    | Integration   | Text vectorization                          | 2            | OpenAI Embeddings API (P0)                                               | Service        |
+| Document Retriever   | Retrieval     | Vector search and ranking                   | 2            | Vector Database (P0)                                                     | Service        |
+| Response Generator   | Generation    | LLM response generation and streaming       | 3, 4         | OpenAI LLM API (P0)                                                      | Service, Event |
+| Auth Middleware      | Security      | Authentication and authorization            | 7            | -                                                                        | API Middleware |
+| Metrics Collector    | Observability | Metrics collection and publication          | 8            | -                                                                        | API            |
+| Health Check Service | Observability | Health check                                | 6, 8         | All External Services (P1)                                               | API            |
 
 ### API Layer
 
 #### InquiryEndpoint
 
-| Field | Detail |
-|-------|--------|
-| Intent | Accept inquiry requests and return streaming responses via SSE |
-| Requirements | 1, 3, 7 |
+| Field        | Detail                                                         |
+| ------------ | -------------------------------------------------------------- |
+| Intent       | Accept inquiry requests and return streaming responses via SSE |
+| Requirements | 1, 3, 7                                                        |
 
 **Responsibilities & Constraints**
 
@@ -249,21 +249,22 @@ flowchart TB
 
 ##### API Contract
 
-| Method | Endpoint | Request | Response | Errors |
-|--------|----------|---------|----------|--------|
-| POST | /api/inquiries | InquiryRequest | SSE Stream | 400, 401, 503, 500 |
-| GET | /health | - | HealthStatus | 503, 500 |
-| GET | /metrics | - | MetricsData | 500 |
+| Method | Endpoint       | Request        | Response     | Errors             |
+| ------ | -------------- | -------------- | ------------ | ------------------ |
+| POST   | /api/inquiries | InquiryRequest | SSE Stream   | 400, 401, 503, 500 |
+| GET    | /health        | -              | HealthStatus | 503, 500           |
+| GET    | /metrics       | -              | MetricsData  | 500                |
 
 **InquiryRequest Schema**:
 
 ```typescript
 interface InquiryRequest {
-  inquiry_text: string;        // Required, max 10000 chars, UTF-8
-  session_id: string;           // Required, UUID format
-  metadata?: {                  // Optional
+  inquiry_text: string; // Required, max 10000 chars, UTF-8
+  session_id: string; // Required, UUID format
+  metadata?: {
+    // Optional
     user_id?: string;
-    timestamp?: string;         // ISO 8601
+    timestamp?: string; // ISO 8601
   };
 }
 ```
@@ -275,8 +276,8 @@ interface InquiryRequest {
 interface ResponseTokenEvent {
   event: "token";
   data: {
-    content: string;            // Token delta
-    sequence: number;           // Token sequence number
+    content: string; // Token delta
+    sequence: number; // Token sequence number
   };
 }
 
@@ -284,7 +285,7 @@ interface ResponseCompleteEvent {
   event: "complete";
   data: {
     total_tokens: number;
-    sources: DocumentSource[];  // Referenced documents
+    sources: DocumentSource[]; // Referenced documents
   };
 }
 
@@ -292,9 +293,9 @@ interface ResponseCompleteEvent {
 interface ErrorEvent {
   event: "error";
   data: {
-    error_code: string;         // "INSUFFICIENT_INFO" | "TIMEOUT" | "SERVICE_UNAVAILABLE"
+    error_code: string; // "INSUFFICIENT_INFO" | "TIMEOUT" | "SERVICE_UNAVAILABLE"
     message: string;
-    retry_after?: number;       // Seconds
+    retry_after?: number; // Seconds
   };
 }
 ```
@@ -322,10 +323,10 @@ interface ErrorEvent {
 
 #### RAG Orchestrator
 
-| Field | Detail |
-|-------|--------|
-| Intent | Control the entire flow of Embedding generation, document search, and response generation |
-| Requirements | 4, 5 |
+| Field        | Detail                                                                                    |
+| ------------ | ----------------------------------------------------------------------------------------- |
+| Intent       | Control the entire flow of Embedding generation, document search, and response generation |
+| Requirements | 4, 5                                                                                      |
 
 **Responsibilities & Constraints**
 
@@ -347,7 +348,9 @@ interface ErrorEvent {
 
 ```typescript
 interface RAGOrchestratorService {
-  processInquiry(request: InquiryRequest): AsyncGenerator<ResponseEvent, void, void>;
+  processInquiry(
+    request: InquiryRequest,
+  ): AsyncGenerator<ResponseEvent, void, void>;
 }
 
 interface InquiryRequest {
@@ -359,7 +362,12 @@ interface InquiryRequest {
 type ResponseEvent =
   | { type: "token"; content: string; sequence: number }
   | { type: "complete"; total_tokens: number; sources: DocumentSource[] }
-  | { type: "error"; error_code: string; message: string; retry_after?: number };
+  | {
+      type: "error";
+      error_code: string;
+      message: string;
+      retry_after?: number;
+    };
 
 interface DocumentSource {
   document_id: string;
@@ -383,10 +391,10 @@ interface DocumentSource {
 
 #### Embedding Service
 
-| Field | Detail |
-|-------|--------|
-| Intent | Vectorize text and generate Embeddings for semantic search |
-| Requirements | 2 |
+| Field        | Detail                                                     |
+| ------------ | ---------------------------------------------------------- |
+| Intent       | Vectorize text and generate Embeddings for semantic search |
+| Requirements | 2                                                          |
 
 **Responsibilities & Constraints**
 
@@ -407,13 +415,17 @@ For details on OpenAI Embeddings API (rate limits, pricing, dimension specificat
 
 ```typescript
 interface EmbeddingService {
-  generateEmbedding(text: string): Promise<Result<EmbeddingVector, EmbeddingError>>;
-  generateEmbeddingBatch(texts: string[]): Promise<Result<EmbeddingVector[], EmbeddingError>>;
+  generateEmbedding(
+    text: string,
+  ): Promise<Result<EmbeddingVector, EmbeddingError>>;
+  generateEmbeddingBatch(
+    texts: string[],
+  ): Promise<Result<EmbeddingVector[], EmbeddingError>>;
 }
 
 interface EmbeddingVector {
-  vector: number[];             // Length: 1536 for text-embedding-3-small
-  model: string;                // "text-embedding-3-small"
+  vector: number[]; // Length: 1536 for text-embedding-3-small
+  model: string; // "text-embedding-3-small"
   usage: {
     prompt_tokens: number;
     total_tokens: number;
@@ -438,10 +450,10 @@ type EmbeddingError =
 
 #### Document Retriever
 
-| Field | Detail |
-|-------|--------|
-| Intent | Search related documents from vector database and rank by relevance |
-| Requirements | 2 |
+| Field        | Detail                                                              |
+| ------------ | ------------------------------------------------------------------- |
+| Intent       | Search related documents from vector database and rank by relevance |
+| Requirements | 2                                                                   |
 
 **Responsibilities & Constraints**
 
@@ -462,14 +474,16 @@ For Pinecone/Qdrant selection rationale and API specifications, see "Vector Data
 
 ```typescript
 interface DocumentRetrieverService {
-  searchDocuments(query: SearchQuery): Promise<Result<DocumentChunk[], RetrievalError>>;
+  searchDocuments(
+    query: SearchQuery,
+  ): Promise<Result<DocumentChunk[], RetrievalError>>;
 }
 
 interface SearchQuery {
   embedding: number[];
-  top_k: number;                // Default: 5, Range: 1-20
-  min_relevance_score: number;  // Default: 0.7, Range: 0.0-1.0
-  filters?: MetadataFilter;     // Optional metadata filters
+  top_k: number; // Default: 5, Range: 1-20
+  min_relevance_score: number; // Default: 0.7, Range: 0.0-1.0
+  filters?: MetadataFilter; // Optional metadata filters
 }
 
 interface DocumentChunk {
@@ -482,7 +496,7 @@ interface DocumentChunk {
     timestamp?: string;
     category?: string;
   };
-  relevance_score: number;      // Cosine similarity score
+  relevance_score: number; // Cosine similarity score
 }
 
 type RetrievalError =
@@ -503,10 +517,10 @@ type RetrievalError =
 
 #### Response Generator
 
-| Field | Detail |
-|-------|--------|
-| Intent | Generate responses using LLM and deliver tokens via streaming |
-| Requirements | 3, 4 |
+| Field        | Detail                                                        |
+| ------------ | ------------------------------------------------------------- |
+| Intent       | Generate responses using LLM and deliver tokens via streaming |
+| Requirements | 3, 4                                                          |
 
 **Responsibilities & Constraints**
 
@@ -528,16 +542,18 @@ For OpenAI LLM API streaming specifications, see "LLM Streaming API Research" in
 
 ```typescript
 interface ResponseGeneratorService {
-  generateStreamingResponse(request: GenerationRequest): AsyncGenerator<GenerationEvent, void, void>;
+  generateStreamingResponse(
+    request: GenerationRequest,
+  ): AsyncGenerator<GenerationEvent, void, void>;
 }
 
 interface GenerationRequest {
   inquiry_text: string;
   documents: DocumentChunk[];
   session_id: string;
-  model?: string;               // Default: "gpt-4o-mini"
-  max_tokens?: number;          // Default: 2000
-  temperature?: number;         // Default: 0.7
+  model?: string; // Default: "gpt-4o-mini"
+  max_tokens?: number; // Default: 2000
+  temperature?: number; // Default: 0.7
 }
 
 type GenerationEvent =
@@ -576,7 +592,7 @@ You are an excellent customer support representative. Please refer to the follow
 ## Response Generation Rules
 - Please respond based on the document content
 - If information is not in the documents, do not speculate, and convey "not described in documents"
-- Please respond in polite and easy-to-understand Japanese
+- Please respond in polite and easy-to-understand Korean
 - Clearly indicate the source of referenced documents
 
 ## Response
@@ -586,10 +602,10 @@ You are an excellent customer support representative. Please refer to the follow
 
 #### Auth Middleware
 
-| Field | Detail |
-|-------|--------|
-| Intent | Authenticate and authorize all API requests to prevent unauthorized access |
-| Requirements | 7 |
+| Field        | Detail                                                                     |
+| ------------ | -------------------------------------------------------------------------- |
+| Intent       | Authenticate and authorize all API requests to prevent unauthorized access |
+| Requirements | 7                                                                          |
 
 **Responsibilities & Constraints**
 
@@ -640,10 +656,10 @@ type AuthError =
 
 #### Metrics Collector
 
-| Field | Detail |
-|-------|--------|
-| Intent | Collect performance metrics and publish in Prometheus format |
-| Requirements | 8 |
+| Field        | Detail                                                       |
+| ------------ | ------------------------------------------------------------ |
+| Intent       | Collect performance metrics and publish in Prometheus format |
+| Requirements | 8                                                            |
 
 **Responsibilities & Constraints**
 
@@ -660,9 +676,9 @@ type AuthError =
 
 ##### API Contract
 
-| Method | Endpoint | Request | Response | Errors |
-|--------|----------|---------|----------|--------|
-| GET | /metrics | - | Prometheus Text Format | 500 |
+| Method | Endpoint | Request | Response               | Errors |
+| ------ | -------- | ------- | ---------------------- | ------ |
+| GET    | /metrics | -       | Prometheus Text Format | 500    |
 
 **Metrics Definitions**:
 
@@ -692,10 +708,10 @@ errors_total{type, component} counter
 
 #### Health Check Service
 
-| Field | Detail |
-|-------|--------|
-| Intent | Check health status of system and dependent services, provide to monitoring system |
-| Requirements | 6, 8 |
+| Field        | Detail                                                                             |
+| ------------ | ---------------------------------------------------------------------------------- |
+| Intent       | Check health status of system and dependent services, provide to monitoring system |
+| Requirements | 6, 8                                                                               |
 
 **Responsibilities & Constraints**
 
@@ -713,17 +729,17 @@ errors_total{type, component} counter
 
 ##### API Contract
 
-| Method | Endpoint | Request | Response | Errors |
-|--------|----------|---------|----------|--------|
-| GET | /health | - | HealthCheckResponse | 503, 500 |
+| Method | Endpoint | Request | Response            | Errors   |
+| ------ | -------- | ------- | ------------------- | -------- |
+| GET    | /health  | -       | HealthCheckResponse | 503, 500 |
 
 **HealthCheckResponse Schema**:
 
 ```typescript
 interface HealthCheckResponse {
   status: "healthy" | "degraded" | "unhealthy";
-  timestamp: string;              // ISO 8601
-  version: string;                // API version
+  timestamp: string; // ISO 8601
+  version: string; // API version
   checks: {
     self: {
       status: "pass" | "fail";
@@ -839,13 +855,13 @@ classDiagram
 
 ```typescript
 interface VectorMetadata {
-  document_id: string;          // UUID
-  chunk_id: string;             // UUID
-  title: string;                // Document title
-  content: string;              // Chunk content (max 2000 chars)
-  source_url?: string;          // Optional source URL
-  category?: string;            // Optional category tag
-  timestamp: string;            // ISO 8601
+  document_id: string; // UUID
+  chunk_id: string; // UUID
+  title: string; // Document title
+  content: string; // Chunk content (max 2000 chars)
+  source_url?: string; // Optional source URL
+  category?: string; // Optional category tag
+  timestamp: string; // ISO 8601
 }
 ```
 
@@ -869,11 +885,11 @@ interface VectorMetadata {
 
 ```typescript
 interface InquiryRequest {
-  inquiry_text: string;        // Required, 1-10000 chars
-  session_id: string;          // Required, UUID v4
+  inquiry_text: string; // Required, 1-10000 chars
+  session_id: string; // Required, UUID v4
   metadata?: {
-    user_id?: string;          // Optional, UUID v4
-    timestamp?: string;        // Optional, ISO 8601
+    user_id?: string; // Optional, UUID v4
+    timestamp?: string; // Optional, ISO 8601
   };
 }
 ```
@@ -885,11 +901,11 @@ interface InquiryRequest {
 ```typescript
 interface ErrorResponse {
   error: {
-    code: string;              // "INVALID_REQUEST" | "UNAUTHORIZED" | "SERVICE_UNAVAILABLE" | "INTERNAL_ERROR"
-    message: string;           // User-friendly message
-    details?: string;          // Optional technical details (not exposed in production)
-    request_id: string;        // Correlation ID
-    timestamp: string;         // ISO 8601
+    code: string; // "INVALID_REQUEST" | "UNAUTHORIZED" | "SERVICE_UNAVAILABLE" | "INTERNAL_ERROR"
+    message: string; // User-friendly message
+    details?: string; // Optional technical details (not exposed in production)
+    request_id: string; // Correlation ID
+    timestamp: string; // ISO 8601
   };
 }
 ```
@@ -946,16 +962,16 @@ This system adopts a multi-layer error handling strategy, implementing appropria
 ```typescript
 interface ErrorLog {
   level: "ERROR" | "WARNING";
-  timestamp: string;           // ISO 8601
-  request_id: string;          // Correlation ID
-  error_type: string;          // Error classification
-  error_message: string;       // Error description
-  component: string;           // Component where error occurred
-  stack_trace?: string;        // Stack trace (development only)
+  timestamp: string; // ISO 8601
+  request_id: string; // Correlation ID
+  error_type: string; // Error classification
+  error_message: string; // Error description
+  component: string; // Component where error occurred
+  stack_trace?: string; // Stack trace (development only)
   context: {
-    user_id?: string;          // If available
+    user_id?: string; // If available
     session_id?: string;
-    inquiry_text?: string;     // Sanitized (no PII)
+    inquiry_text?: string; // Sanitized (no PII)
   };
 }
 ```
@@ -1058,9 +1074,7 @@ Detailed type definitions are consolidated in this section, only concise types a
 
 ```typescript
 // Complete Error Type Definitions
-type Result<T, E> =
-  | { success: true; value: T }
-  | { success: false; error: E };
+type Result<T, E> = { success: true; value: T } | { success: false; error: E };
 
 type APIError =
   | { type: "ValidationError"; field: string; message: string }
@@ -1068,8 +1082,18 @@ type APIError =
   | { type: "AuthorizationError"; message: string }
   | { type: "RateLimitError"; retry_after: number; message: string }
   | { type: "ResourceNotFoundError"; resource: string; message: string }
-  | { type: "ServiceUnavailableError"; service: string; retry_after?: number; message: string }
-  | { type: "TimeoutError"; operation: string; timeout_ms: number; message: string }
+  | {
+      type: "ServiceUnavailableError";
+      service: string;
+      retry_after?: number;
+      message: string;
+    }
+  | {
+      type: "TimeoutError";
+      operation: string;
+      timeout_ms: number;
+      message: string;
+    }
   | { type: "InternalServerError"; request_id: string; message: string };
 
 // Complete Request/Response Schemas (consolidate previously mentioned schemas)

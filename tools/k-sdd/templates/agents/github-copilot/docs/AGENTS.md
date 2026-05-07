@@ -1,10 +1,11 @@
-# AI-DLC and Spec-Driven Development
+# Agentic SDLC and Spec-Driven Development
 
-Kiro-style Spec Driven Development implementation on AI-DLC (AI Development Life Cycle)
+Kiro-style Spec-Driven Development on an agentic SDLC
 
 ## Project Context
 
 ### Paths
+
 - Steering: `{{KIRO_DIR}}/steering/`
 - Specs: `{{KIRO_DIR}}/specs/`
 
@@ -14,13 +15,18 @@ Kiro-style Spec Driven Development implementation on AI-DLC (AI Development Life
 **Specs** (`{{KIRO_DIR}}/specs/`) - Formalize development process for individual features
 
 ### Active Specifications
+
 - Check `{{KIRO_DIR}}/specs/` for active specifications
 - Use `/kiro-spec-status [feature-name]` to check progress
 
 ## Development Guidelines
+
+<!-- DEV_GUIDELINES: injected at install time with language-specific guidelines (npx k-sdd@latest --lang <code>) -->
+
 {{DEV_GUIDELINES}}
 
 ## Minimal Workflow
+
 - Phase 0 (optional): `/kiro-steering`, `/kiro-steering-custom`
 - Phase 1 (Specification):
   - `/kiro-spec-init "description"`
@@ -34,12 +40,14 @@ Kiro-style Spec Driven Development implementation on AI-DLC (AI Development Life
 - Progress check: `/kiro-spec-status {feature}` (use anytime)
 
 ## Development Rules
+
 - 3-phase approval workflow: Requirements → Design → Tasks → Implementation
 - Human review required each phase; use `-y` only for intentional fast-track
 - Keep steering current and verify alignment with `/kiro-spec-status`
 - Follow the user's instructions precisely, and within that scope act autonomously: gather the necessary context and complete the requested work end-to-end in this run, asking questions only when essential information is missing or the instructions are critically ambiguous.
 
 ## Steering Configuration
+
 - Load entire `{{KIRO_DIR}}/steering/` as project memory
 - Default files: `product.md`, `tech.md`, `structure.md`
 - Custom files are supported (managed via `/kiro-steering-custom`)

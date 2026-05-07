@@ -13,10 +13,10 @@ export const resolveOs = (input: 'auto' | OSType, runtime: EnvLike = {}): OSType
   if (platform === 'darwin') return 'mac';
   if (platform === 'win32') return 'windows';
   if (platform === 'linux') {
-    // WSL은 결국 linux로 취급함
+    // WSL은 최종적으로 linux로 취급
     return 'linux';
   }
 
-  // 알 수없는 플랫폼은 linux로 폴백
+  // 알 수 없는 플랫폼은 linux로 폴백
   return 'linux';
 };

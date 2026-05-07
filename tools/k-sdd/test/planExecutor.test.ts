@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { executeProcessedArtifacts } from '../src/plan/executor.js';
 import type { ConflictInfo } from '../src/plan/executor.js';
 import type { ProcessedArtifact } from '../src/manifest/processor.js';
-import { mkdtemp, mkdir, writeFile, readFile, stat } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, stat, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { parseArgs } from '../src/cli/args.js';
@@ -34,7 +34,7 @@ describe('plan executor', () => {
     expect(res.written).toBe(1);
     const out = join(cwd, 'out/README.md');
     expect(await exists(out)).toBe(true);
-    expect(await fileContent(out)).toMatch(/Agent: claude-code/);
+    expect(await fileContent(out)).toMatch(/Agent: claude-code-skills/);
   });
 
   it('writes templateFile JSON with placeholders and pretty format', async () => {
@@ -52,7 +52,7 @@ describe('plan executor', () => {
     expect(res.written).toBe(1);
     const out = join(cwd, 'out/config.json');
     const content = await fileContent(out);
-    expect(JSON.parse(content)).toEqual({ agent: 'claude-code' });
+    expect(JSON.parse(content)).toEqual({ agent: 'claude-code-skills' });
     expect(content.endsWith('\n')).toBe(true);
   });
 
@@ -89,8 +89,8 @@ describe('plan executor', () => {
     const resolved = baseResolved();
     const res = await executeProcessedArtifacts(items, resolved, { cwd, templatesRoot });
     expect(res.written).toBe(3);
-    expect(await fileContent(join(cwd, 'out/a.md'))).toMatch(/Hello claude-code/);
-    expect(JSON.parse(await fileContent(join(cwd, 'out/b.json')))).toEqual({ x: 'claude-code' });
+    expect(await fileContent(join(cwd, 'out/a.md'))).toMatch(/Hello claude-code-skills/);
+    expect(JSON.parse(await fileContent(join(cwd, 'out/b.json')))).toEqual({ x: 'claude-code-skills' });
     expect(await fileContent(join(cwd, 'out/c.txt'))).toBe('plain');
   });
 
@@ -236,10 +236,10 @@ describe('plan executor', () => {
 
       const res = await executeProcessedArtifacts(items, resolved, { cwd, templatesRoot, onConflict });
       expect(res.written).toBe(1);
-      expect(await fileContent(out)).toMatch(/New: claude-code/);
+      expect(await fileContent(out)).toMatch(/New: claude-code-skills/);
     });
 
-    it('creates new files automatically without prompts in prompt mode', async () => {
+  it('creates new files automatically without prompts in prompt mode', async () => {
       const templatesRoot = await mkTmp();
       const cwd = await mkTmp();
       const tpl = join(templatesRoot, 'new-file.tpl.md');
@@ -265,7 +265,49 @@ describe('plan executor', () => {
       
       const out = join(cwd, 'out/new-file.md');
       expect(await exists(out)).toBe(true);
-      expect(await fileContent(out)).toMatch(/Brand New: claude-code/);
+      expect(await fileContent(out)).toMatch(/Brand New: claude-code-skills/);
     });
+  });
+
+  it('rejects template destinations that escape the cwd', async () => {
+    const templatesRoot = await mkTmp();
+    const cwd = await mkTmp();
+    await writeFile(join(templatesRoot, 'doc.tpl.md'), 'escape', 'utf8');
+
+    const items: ProcessedArtifact[] = [
+      { id: 'doc', source: { type: 'templateFile', from: 'doc.tpl.md', toDir: '..', outFile: 'escape.md' } },
+    ];
+
+    const resolved = baseResolved();
+    await expect(executeProcessedArtifacts(items, resolved, { cwd, templatesRoot })).rejects.toThrow(/destination path/i);
+  });
+
+  it('rejects template sources that escape the templates root', async () => {
+    const templatesRoot = await mkTmp();
+    const cwd = await mkTmp();
+    const outside = join(await mkTmp(), 'secret.tpl.md');
+    await writeFile(outside, 'secret', 'utf8');
+
+    const items: ProcessedArtifact[] = [
+      { id: 'doc', source: { type: 'templateFile', from: '../secret.tpl.md', toDir: 'out', outFile: 'README.md' } },
+    ];
+
+    const resolved = baseResolved();
+    await expect(executeProcessedArtifacts(items, resolved, { cwd, templatesRoot })).rejects.toThrow(/source path/i);
+  });
+
+  it('rejects writes through symlinked destinations', async () => {
+    const templatesRoot = await mkTmp();
+    const cwd = await mkTmp();
+    const external = await mkTmp();
+    await writeFile(join(templatesRoot, 'doc.tpl.md'), 'symlink target', 'utf8');
+    await symlink(external, join(cwd, 'out'));
+
+    const items: ProcessedArtifact[] = [
+      { id: 'doc', source: { type: 'templateFile', from: 'doc.tpl.md', toDir: 'out', outFile: 'README.md' } },
+    ];
+
+    const resolved = baseResolved();
+    await expect(executeProcessedArtifacts(items, resolved, { cwd, templatesRoot })).rejects.toThrow(/symlink/i);
   });
 });

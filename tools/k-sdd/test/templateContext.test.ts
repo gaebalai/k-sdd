@@ -45,7 +45,7 @@ describe('buildTemplateContext', () => {
   });
 
   it('provides guidelines for all supported languages', () => {
-    const langs = ['en', 'ko', 'zh-TW', 'zh', 'es', 'pt', 'de', 'fr', 'ru', 'it', 'ja', 'ar'] as const;
+    const langs = ['en', 'ko', 'zh-TW', 'zh', 'es', 'pt', 'de', 'fr', 'ru', 'it', 'ja', 'ar', 'el'] as const;
     for (const lang of langs) {
       const ctx = buildTemplateContext({ agent: 'claude-code', lang });
       expect(ctx.DEV_GUIDELINES.length).toBeGreaterThan(0);

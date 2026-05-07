@@ -1,6 +1,8 @@
 # Claude Code Subagents Workflow (Spec-Quick Focus)
 
-> 📖 **한국어 가이드:** [Claude Code Subagents 워크플로우(한국어)](ko/claude-subagents.md)
+> 📖 **한국어 가이드는 여기:** [Claude 서브에이전트 가이드 (한국어)](ko/claude-subagents.md)
+
+> **Scope:** this page covers the legacy **`--claude-agent` / `--claude-code-agent`** install target, which uses static Subagent files under `.claude/agents/kiro/*.md` to accelerate `spec-quick`. If you installed with `--claude-skills` (or any other `--*-skills` flag) and are looking for how skills mode dispatches implementer / reviewer / debugger roles, see the [Skill Reference](skill-reference.md) — specifically the "Inside `/kiro-impl`" and "Skills mode vs `--claude-agent`" sections.
 
 This guide explains how the **Claude Code Subagents** install target (`--claude-agent` / `--claude-code-agent`) accelerates the spec workflow via the `spec-quick` command. Other `/kiro:*` commands reuse the same Subagents, but this document focuses on the spec-quick orchestration because it is the only Subagent-enabled command with its own control logic.
 
@@ -14,7 +16,7 @@ This guide explains how the **Claude Code Subagents** install target (`--claude-
 
 ## How `spec-quick` Orchestrates Subagents
 
-`spec-quick` is a macro-command that calls four Subagents in sequence—`spec-init` (inline), `spec-requirements`, `spec-design`, and `spec-tasks`—to generate a brand-new spec in one run. Internally、the command follows the same instructions defined in `tools/k-sdd/templates/agents/claude-code-agent/commands/spec-quick.md`.
+`spec-quick` is a macro-command that calls four Subagents in sequence—`spec-init` (inline), `spec-requirements`, `spec-design`, and `spec-tasks`—to generate a brand-new spec in one run. Internally, the command follows the same instructions defined in `tools/k-sdd/templates/agents/claude-code-agent/commands/spec-quick.md`.
 
 ### Modes
 
@@ -25,14 +27,14 @@ Both modes skip `/kiro:validate-gap` and `/kiro:validate-design`. The completion
 
 ### Phase Breakdown
 
-| Phase | Triggered Subagent | What happens |
-|-------|--------------------|--------------|
-| 1. Initialize | Inline instructions (no Subagent) | Creates `.kiro/specs/{feature}/`, writes `spec.json` + `requirements.md` skeleton from templates. TodoWrite marks "Initialize spec" as complete. |
-| 2. Requirements | `agents/spec-requirements.md` | Runs `/kiro:spec-requirements {feature}` to fill out requirements.md. In automatic mode, ignores "Next step" prompts from this Subagent and proceeds immediately. |
-| 3. Design | `agents/spec-design.md` | Executes `/kiro:spec-design {feature} -y`, which generates/updates `research.md` (if needed) and `design.md`. TodoWrite now marks three phases complete. |
-| 4. Tasks | `agents/spec-tasks.md` | Calls `/kiro:spec-tasks {feature} -y` to build `tasks.md` with Req coverage and P-wave labels. When finished, TodoWrite hits 4/4 complete and spec-quick prints the final summary. |
+| Phase           | Triggered Subagent                | What happens                                                                                                                                                                       |
+| --------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Initialize   | Inline instructions (no Subagent) | Creates `.kiro/specs/{feature}/`, writes `spec.json` + `requirements.md` skeleton from templates. TodoWrite marks "Initialize spec" as complete.                                   |
+| 2. Requirements | `agents/spec-requirements.md`     | Runs `/kiro:spec-requirements {feature}` to fill out requirements.md. In automatic mode, ignores "Next step" prompts from this Subagent and proceeds immediately.                  |
+| 3. Design       | `agents/spec-design.md`           | Executes `/kiro:spec-design {feature} -y`, which generates/updates `research.md` (if needed) and `design.md`. TodoWrite now marks three phases complete.                           |
+| 4. Tasks        | `agents/spec-tasks.md`            | Calls `/kiro:spec-tasks {feature} -y` to build `tasks.md` with Req coverage and P-wave labels. When finished, TodoWrite hits 4/4 complete and spec-quick prints the final summary. |
 
-In automatic mode the command never pauses, even when Subagents emit “次のステップ” instructions intended for standalone usage. Interactive mode prompts after each phase (“Continue to requirements?”, “Continue to design?”, etc.).
+In automatic mode the command never pauses, even when Subagents emit “다음 단계” instructions intended for standalone usage. Interactive mode prompts after each phase (“Continue to requirements?”, “Continue to design?”, etc.).
 
 ### Outputs and Skipped Gates
 
@@ -44,6 +46,7 @@ Upon completion you get:
 - `tasks.md` (parallel-ready plan)
 
 What it **doesn’t** do:
+
 - No `/kiro:validate-gap` integration check
 - No `/kiro:validate-design` quality gate
 - No `/kiro:validate-impl` (implementation hasn’t started)
@@ -64,10 +67,10 @@ Need to re-run just one phase? Mention `@agents-spec-design`, `@agents-spec-task
 
 ## Customising Subagent Behaviour
 
-1. **Start with shared templates/rules** – Update `{{KIRO_DIR}}/settings/templates/*.md`, `{{KIRO_DIR}}/settings/rules/*.md`에 팀별 체크리스트나 리뷰 관점을 반영하면 모든 에이전트 Subagent가 동일한 일차 정보를 추가한다.
-2. **Then adjust Subagent prompts if필요** – `.claude/agents/kiro/*.md`에 회사 고유의 휴리스틱(우선도, 리스크 분류, 테스트 정책 등)을 추가한다.
-3. **Tune command triggers** – `.claude/commands/kiro/*.md`의 `call_subagent`섹션을 편집하여 호출 조건과 추가 가드 레일을 제어합니다.
-4. **Keep prompts concise** – Task Tool의 컨텍스트가 짧기 때문에 긴 설명은 템플리/룰 측에 놓고 Subagent 프롬프트는 요점만 기재한다.
+1. **Start with shared templates/rules** – Reflect team-specific checklists and review viewpoints into `{{KIRO_DIR}}/settings/templates/*.md` and `{{KIRO_DIR}}/settings/rules/*.md` so that every agent and Subagent references the same primary source.
+2. **Then adjust Subagent prompts if needed** – Add company-specific heuristics (prioritization, risk classification, testing strategy, etc.) to `.claude/agents/kiro/*.md`.
+3. **Tune command triggers** – Edit the `call_subagent` section in `.claude/commands/kiro/*.md` to control invocation conditions and additional guardrails.
+4. **Keep prompts concise** – The Task Tool's context is short, so place long explanations in templates/rules and keep Subagent prompts to the essentials.
 
 ## Troubleshooting
 
@@ -77,4 +80,6 @@ Need to re-run just one phase? Mention `@agents-spec-design`, `@agents-spec-task
 
 ## See Also
 
+- [Skill Reference](skill-reference.md) — skills-mode workflow, including "Inside `/kiro-impl`" dispatch details and the Skills mode vs `--claude-agent` comparison
 - [Spec-Driven Development Workflow](spec-driven.md)
+- [Project README — Supported Agents](../../README.md#supported-agents)

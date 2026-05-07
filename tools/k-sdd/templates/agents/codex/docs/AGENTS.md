@@ -1,8 +1,9 @@
-# AI-DLC and Spec-Driven Development
+# Agentic SDLC and Spec-Driven Development
 
-Kiro-style Spec Driven Development implementation on AI-DLC (AI Development Life Cycle)
+Kiro-style Spec-Driven Development on an agentic SDLC
 
 ## Project Memory
+
 Project memory keeps persistent guidance (steering, specs notes, component docs) so Codex honors your standards each run. Treat it as the long-lived source of truth for patterns, conventions, and decisions.
 
 - Use `{{KIRO_DIR}}/steering/` for project-wide policies: architecture principles, naming schemes, security constraints, tech stack decisions, api standards, etc.
@@ -12,6 +13,7 @@ Project memory keeps persistent guidance (steering, specs notes, component docs)
 ## Project Context
 
 ### Paths
+
 - Steering: `{{KIRO_DIR}}/steering/`
 - Specs: `{{KIRO_DIR}}/specs/`
 
@@ -21,13 +23,18 @@ Project memory keeps persistent guidance (steering, specs notes, component docs)
 **Specs** (`{{KIRO_DIR}}/specs/`) - Formalize development process for individual features
 
 ### Active Specifications
+
 - Check `{{KIRO_DIR}}/specs/` for active specifications
 - Use `/prompts:kiro-spec-status [feature-name]` to check progress
 
 ## Development Guidelines
+
+<!-- DEV_GUIDELINES: injected at install time with language-specific guidelines (npx k-sdd@latest --lang <code>) -->
+
 {{DEV_GUIDELINES}}
 
 ## Minimal Workflow
+
 - Phase 0 (optional): `/prompts:kiro-steering`, `/prompts:kiro-steering-custom`
 - Phase 1 (Specification):
   - `/prompts:kiro-spec-init "description"`
@@ -41,12 +48,14 @@ Project memory keeps persistent guidance (steering, specs notes, component docs)
 - Progress check: `/prompts:kiro-spec-status {feature}` (use anytime)
 
 ## Development Rules
+
 - 3-phase approval workflow: Requirements → Design → Tasks → Implementation
 - Human review required each phase; use `-y` only for intentional fast-track
 - Keep steering current and verify alignment with `/prompts:kiro-spec-status`
 - Follow the user's instructions precisely, and within that scope act autonomously: gather the necessary context and complete the requested work end-to-end in this run, asking questions only when essential information is missing or the instructions are critically ambiguous.
 
 ## Steering Configuration
+
 - Load entire `{{KIRO_DIR}}/steering/` as project memory
 - Default files: `product.md`, `tech.md`, `structure.md`
 - Custom files are supported (managed via `/prompts:kiro-steering-custom`)

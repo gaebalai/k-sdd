@@ -1,6 +1,6 @@
 # Customization Guide
 
-> 📖 한국어 가이드: [커스터마이징 가이드](ko/customization-guide.md)
+> 📖 한국어판은 여기: [커스터마이제이션 가이드](ko/customization-guide.md)
 
 This guide explains how to edit k-sdd's templates and rules to adapt to your team's specific workflow.
 
@@ -24,11 +24,13 @@ Both are located under `{{KIRO_DIR}}/settings/` and are shared across the entire
 **Role**: Defines the **document structure** that AI generates. Sections and fields added to templates will be automatically filled in by the AI.
 
 **Files to Edit**:
+
 - `requirements.md` - Requirements document structure
 - `design.md` - Design document structure
 - `tasks.md` - Task breakdown structure
 
 **Customization Examples**:
+
 - Add PRD-style sections (Product Overview, Success Metrics, etc.)
 - Add approval checklists
 - Add JIRA fields
@@ -42,6 +44,7 @@ Both are located under `{{KIRO_DIR}}/settings/` and are shared across the entire
 **Role**: Defines AI's **generation rules and principles**. Editing rules changes AI's judgment criteria and generation style.
 
 **Files to Edit**:
+
 - `ears-format.md` - EARS format requirement description rules
 - `design-principles.md` - Design principles and documentation standards
 - `tasks-generation.md` - Task breakdown granularity and structure rules
@@ -49,6 +52,7 @@ Both are located under `{{KIRO_DIR}}/settings/` and are shared across the entire
 - Others (`design-discovery-*.md`, `gap-analysis.md`, etc.)
 
 **Customization Examples**:
+
 - Adjust task granularity (1-3 hours → 4-8 hours, etc.)
 - Add design principles (security, performance requirements, etc.)
 - Requirement priority determination criteria
@@ -59,14 +63,15 @@ Both are located under `{{KIRO_DIR}}/settings/` and are shared across the entire
 
 k-sdd commands read and understand documents through AI agents. The following elements **must be maintained**:
 
-| File | Required Elements | Reason |
-|------|-------------------|--------|
-| **requirements.md** | Numbered criteria (`1.`, `2.`, `3.`...) | AI recognizes the number and structure of criteria |
-| | Consistency with template | AI learns structure from template |
-| **design.md** | **File existence** | Commands read this file |
-| **tasks.md** | `- [ ] N.` checkbox format | Task execution engine recognizes this |
-| | `_Requirements: X, Y_` references | Requirement traceability |
-| | Hierarchical structure (1, 1.1, 1.2...) | Dependency analysis |
+| File                | Required Elements                            | Reason                                                  |
+| ------------------- | -------------------------------------------- | ------------------------------------------------------- |
+| **requirements.md** | Numbered criteria (`1.`, `2.`, `3.`...)      | AI recognizes the number and structure of criteria      |
+|                     | Consistency with template                    | AI learns structure from template                       |
+| **design.md**       | **File existence**                           | Commands read this file                                 |
+|                     | **File Structure Plan** (recommended in 3.0) | Implementer subagents use it for directory/file mapping |
+| **tasks.md**        | `- [ ] N.` checkbox format                   | Task execution engine recognizes this                   |
+|                     | `_Requirements: X, Y_` references            | Requirement traceability                                |
+|                     | Hierarchical structure (1, 1.1, 1.2...)      | Dependency analysis                                     |
 
 **Important**: Headings in requirements.md can be freely changed. AI learns the structural pattern defined in the template and generates using the same pattern.
 
@@ -83,6 +88,7 @@ requirements.md is very flexible for customization:
 - ✅ **Custom**: `### REQ-1:` / `#### Verification Criteria`
 
 **Key Points**:
+
 - Maintain numbering pattern (`N:` where N is the number)
 - Maintain hierarchy (`###` and `####`)
 - Keep consistency between template and generated files
@@ -99,6 +105,7 @@ requirements.md is very flexible for customization:
 - ✅ **Numbering is important**: Content is free as long as the format `1.`, `2.`, `3.` is maintained
 
 **Benefits of EARS format**:
+
 - High testability (clear conditions and expected results)
 - Easy for AI to understand (improves accuracy of design/tasks generation)
 - Industry standard (easy for reviewers to read)
@@ -113,15 +120,19 @@ requirements.md is very flexible for customization:
 ### Requirement 1: User Authentication
 
 #### Acceptance Criteria
+
 1. WHEN user clicks login button THEN system displays authentication screen
 2. IF invalid credentials are entered THEN system displays error message
 3. WHILE authentication is in progress THEN system displays loading indicator
 ```
 
 **Template Setting**:
+
 ```markdown
 # templates/specs/requirements.md
+
 ### Requirement 1: {{REQUIREMENT_AREA_1}}
+
 #### Acceptance Criteria
 ```
 
@@ -133,6 +144,7 @@ requirements.md is very flexible for customization:
 ### Requirement 1: User Authentication
 
 #### Acceptance Criteria
+
 1. GIVEN user is on login page WHEN clicks login button THEN authentication screen is displayed
 2. GIVEN invalid credentials WHEN attempting login THEN error message is displayed
 3. GIVEN authentication in progress WHEN displaying screen THEN loading indicator is displayed
@@ -144,15 +156,19 @@ requirements.md is very flexible for customization:
 ### REQ-001: User Authentication
 
 #### Verification Criteria
+
 1. When user clicks login button, system displays authentication screen
 2. When invalid credentials are entered, system displays error message
 3. During authentication processing, system displays loading indicator
 ```
 
 **Template Setting**:
+
 ```markdown
 # templates/specs/requirements.md
+
 ### REQ-001: {{REQUIREMENT_AREA_1}}
+
 #### Verification Criteria
 ```
 
@@ -162,6 +178,7 @@ requirements.md is very flexible for customization:
 ### Requirement 1: User Authentication
 
 #### Acceptance Criteria
+
 1. WHEN user clicks login button THEN system displays authentication screen
 2. IF invalid credentials are entered THEN system displays error message
 3. WHILE authentication is in progress THEN system displays loading indicator
@@ -180,6 +197,8 @@ requirements.md is very flexible for customization:
 
 **About Mermaid diagrams**: Basic syntax rules are defined in `{{KIRO_DIR}}/settings/rules/design-principles.md`, not in template constraints. You can change diagram requirements by editing the rules file.
 
+**File Structure Plan (3.0)**: In skills mode, `design.md` includes a **File Structure Plan** section that maps directory structure and file responsibilities. This section is recommended but not mandatory -- commands-based workflows can also benefit from adding it manually to their design template.
+
 **Only file existence is mandatory**: Commands read `design.md` but do not parse specific headings or formats.
 
 ### 🎯 design.md Customization Examples
@@ -188,10 +207,15 @@ requirements.md is very flexible for customization:
 
 ```markdown
 ## 1. Overview (Required)
+
 ## 2. Business Requirements Alignment (Required)
+
 ## 3. Security Review (Required)
+
 ## 4. Architecture Design (Required)
+
 ## 5. Performance Verification (P0 features only)
+
 ## 6. Approval
 ```
 
@@ -199,12 +223,15 @@ requirements.md is very flexible for customization:
 
 ```markdown
 ## Design-ID: FEAT-2024-001
+
 ## Trace-Matrix
+
 | Req ID | Design Element | Test ID | Implementation File |
-|--------|----------------|---------|-------------------|
-| REQ-1 | Component A | TEST-1 | src/a.ts |
+| ------ | -------------- | ------- | ------------------- |
+| REQ-1  | Component A    | TEST-1  | src/a.ts            |
 
 ## Architecture
+
 ...
 ```
 
@@ -212,10 +239,15 @@ requirements.md is very flexible for customization:
 
 ```markdown
 ## Overview
+
 ## System Architecture
+
 ## Module Design
+
 ## Data Structure
+
 ## Error Handling
+
 ## Testing Strategy
 ```
 
@@ -283,6 +315,7 @@ We present 3 representative customization scenarios tailored to team-specific ne
 **File to Edit**: `{{KIRO_DIR}}/settings/templates/specs/requirements.md`
 
 **🔒 Structure to Maintain**:
+
 - Numbered heading pattern (e.g., `### Requirement N:`, `### REQ-N:`, or localized equivalents)
 - Criteria section heading (e.g., `#### Acceptance Criteria`, or localized equivalents)
 - Numbered criteria (`1.`, `2.`, `3.`...)
@@ -398,12 +431,14 @@ We present 3 representative customization scenarios tailored to team-specific ne
 **Compliance Requirements**: {{COMPLIANCE_LIST}}
 
 **Review Checklist**:
+
 - [ ] Product team reviewed
 - [ ] Business stakeholder approved
 - [ ] Legal/Compliance reviewed
 - [ ] Security team approved
 
 **Approval History**:
+
 - Product Owner: {{APPROVER_NAME}} - {{DATE}}
 - Engineering Lead: {{APPROVER_NAME}} - {{DATE}}
 ```
@@ -456,6 +491,7 @@ Each acceptance criterion MUST specify:
 ### Non-Functional Requirements
 
 Always include NFR sections for:
+
 - Performance (response time, throughput)
 - Security (authentication, encryption, access control)
 - Scalability (concurrent users, data volume)
@@ -474,7 +510,7 @@ When you run `/kiro:spec-requirements my-feature`:
 3. **Verification Method** and **Success Threshold** are added to each requirement
 4. **Non-Functional Requirements** section is automatically generated
 5. **Compliance & Approvals** checklist is added
-6. Requirement numbering and acceptance criteria structure are maintained (compatible with `/kiro:spec-impl`)
+6. Requirement numbering and acceptance criteria structure are maintained (compatible with `/kiro:spec-impl` and its skills mode equivalent `/kiro-impl`)
 
 ### 🧪 Testing Method
 
@@ -520,6 +556,7 @@ grep -A 3 "## Non-Functional Requirements" {{KIRO_DIR}}/specs/test-prd-feature/r
 **File to Edit**: `{{KIRO_DIR}}/settings/templates/specs/design.md`
 
 **🔒 Structure to Maintain**:
+
 - **File existence only** - Heading names, order, and formats are all free
 
 **➕ Sections to Add**:
@@ -529,7 +566,7 @@ grep -A 3 "## Non-Functional Requirements" {{KIRO_DIR}}/specs/test-prd-feature/r
 
 Add the following sections to existing `design.md`:
 
-```markdown
+````markdown
 ## API Specification
 
 ### Base Configuration
@@ -553,12 +590,15 @@ Add the following sections to existing `design.md`:
 **Authentication**: Required
 
 **Request Headers**:
+
 ```http
 Authorization: Bearer {{token}}
 Content-Type: application/json
 ```
+````
 
 **Request Body**:
+
 ```json
 {
   "field1": "string",
@@ -570,11 +610,13 @@ Content-Type: application/json
 ```
 
 **Request Validation**:
+
 - `field1`: Required, string, max 255 characters
 - `field2`: Required, integer, range 1-1000
 - `field3.nestedField`: Optional, string
 
 **Response (200 OK)**:
+
 ```json
 {
   "data": {
@@ -593,6 +635,7 @@ Content-Type: application/json
 **Error Responses**:
 
 - **400 Bad Request**:
+
 ```json
 {
   "error": {
@@ -606,6 +649,7 @@ Content-Type: application/json
 ```
 
 - **401 Unauthorized**:
+
 ```json
 {
   "error": {
@@ -616,6 +660,7 @@ Content-Type: application/json
 ```
 
 - **429 Too Many Requests**:
+
 ```json
 {
   "error": {
@@ -627,6 +672,7 @@ Content-Type: application/json
 ```
 
 **Rate Limiting Headers**:
+
 ```http
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -642,13 +688,16 @@ X-RateLimit-Reset: 1640000000
 **Authentication**: Required
 
 **Path Parameters**:
+
 - `id`: UUID, required
 
 **Query Parameters**:
+
 - `include`: Comma-separated list of related resources
 - `fields`: Comma-separated list of fields to return
 
 **Response (200 OK)**:
+
 ```json
 {
   "data": {
@@ -659,6 +708,7 @@ X-RateLimit-Reset: 1640000000
 ```
 
 **Error Responses**:
+
 - **404 Not Found**: Resource does not exist
 
 ---
@@ -668,11 +718,13 @@ X-RateLimit-Reset: 1640000000
 **Strategy**: Cursor-based / Offset-based
 
 **Request**:
+
 ```http
 GET /api/v1/{{resource}}?page=1&limit=20&sort=createdAt:desc
 ```
 
 **Response**:
+
 ```json
 {
   "data": [...],
@@ -700,6 +752,7 @@ GET /api/v1/{{resource}}?page=1&limit=20&sort=createdAt:desc
 #### {{table_name}}
 
 **Schema**:
+
 ```sql
 CREATE TABLE {{table_name}} (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -716,6 +769,7 @@ CREATE TABLE {{table_name}} (
 ```
 
 **Indexes**:
+
 ```sql
 CREATE INDEX idx_{{table_name}}_field1 ON {{table_name}} (field1);
 CREATE INDEX idx_{{table_name}}_status ON {{table_name}} (status) WHERE deleted_at IS NULL;
@@ -723,6 +777,7 @@ CREATE INDEX idx_{{table_name}}_created_at ON {{table_name}} (created_at DESC);
 ```
 
 **Foreign Keys**:
+
 ```sql
 ALTER TABLE {{table_name}}
   ADD CONSTRAINT fk_{{relation}}
@@ -742,6 +797,7 @@ erDiagram
 ```
 
 **Relationship Description**:
+
 - {{TABLE1}} has many {{TABLE2}}: {{DESCRIPTION}}
 - {{TABLE2}} belongs to {{TABLE3}}: {{DESCRIPTION}}
 
@@ -761,6 +817,7 @@ graph TB
 ```
 
 **Layer Responsibilities**:
+
 - **Controller**: Request validation, response formatting
 - **Service**: Business logic, transaction management
 - **Repository**: Data access, query building
@@ -788,6 +845,7 @@ graph TB
 ### Cache Invalidation
 
 **Strategies**:
+
 - Time-based: {{DESCRIPTION}}
 - Event-based: {{DESCRIPTION}}
 - Manual: {{DESCRIPTION}}
@@ -801,6 +859,7 @@ graph TB
 **Authentication Method**: JWT / OAuth 2.0 / API Key
 
 **Token Structure**:
+
 ```json
 {
   "sub": "user_id",
@@ -813,6 +872,7 @@ graph TB
 **Authorization Model**: RBAC / ABAC
 
 **Protected Resources**:
+
 - {{RESOURCE_1}}: Requires {{PERMISSION}}
 - {{RESOURCE_2}}: Requires {{PERMISSION}}
 
@@ -821,6 +881,7 @@ graph TB
 ### Input Validation
 
 **Validation Rules**:
+
 - Sanitize all user inputs
 - Whitelist allowed characters
 - Validate data types and ranges
@@ -837,6 +898,7 @@ graph TB
 **Log Levels**: DEBUG, INFO, WARN, ERROR
 
 **Structured Logging Format**:
+
 ```json
 {
   "timestamp": "ISO 8601",
@@ -855,12 +917,14 @@ graph TB
 ### Metrics
 
 **Application Metrics**:
+
 - Request rate (requests/second)
 - Response time (p50, p95, p99)
 - Error rate (%)
 - Active connections
 
 **Business Metrics**:
+
 - {{METRIC_1}}: {{DESCRIPTION}}
 - {{METRIC_2}}: {{DESCRIPTION}}
 
@@ -872,23 +936,25 @@ graph TB
 
 ### Performance Targets
 
-| Metric | Target | Critical Threshold |
-|--------|--------|-------------------|
-| API Response Time (p95) | < 200ms | < 500ms |
-| Database Query Time (p95) | < 50ms | < 150ms |
-| Throughput | {{TARGET}} req/s | {{MIN}} req/s |
-| Concurrent Connections | {{TARGET}} | {{MAX}} |
+| Metric                    | Target           | Critical Threshold |
+| ------------------------- | ---------------- | ------------------ |
+| API Response Time (p95)   | < 200ms          | < 500ms            |
+| Database Query Time (p95) | < 50ms           | < 150ms            |
+| Throughput                | {{TARGET}} req/s | {{MIN}} req/s      |
+| Concurrent Connections    | {{TARGET}}       | {{MAX}}            |
 
 ---
 
 ### Scalability Strategy
 
 **Horizontal Scaling**:
+
 - Stateless application servers
 - Load balancer: {{LB_TYPE}}
 - Auto-scaling policy: CPU > {{THRESHOLD}}%
 
 **Database Scaling**:
+
 - Read replicas: {{COUNT}}
 - Sharding strategy: {{STRATEGY}}
 - Connection pooling: {{POOL_SIZE}}
@@ -900,11 +966,13 @@ graph TB
 ### Retry Logic
 
 **Retry Policy**:
+
 - Max retries: {{MAX_RETRIES}}
 - Backoff strategy: Exponential
 - Jitter: {{JITTER_ENABLED}}
 
 **Retryable Errors**:
+
 - Network timeouts
 - 5xx server errors
 - Rate limit errors (429)
@@ -914,14 +982,17 @@ graph TB
 ### Circuit Breaker
 
 **Configuration**:
+
 - Failure threshold: {{THRESHOLD}}%
 - Timeout: {{TIMEOUT}}ms
 - Reset timeout: {{RESET_TIMEOUT}}s
 
 **Protected Services**:
+
 - {{SERVICE_1}}
 - {{SERVICE_2}}
-```
+
+````
 
 </details>
 
@@ -1015,7 +1086,7 @@ graph TB
    - Consider security from design phase
    - Threat modeling for critical features
    - Security review checklist
-```
+````
 
 </details>
 
@@ -1073,6 +1144,7 @@ grep -A 10 "## Security" {{KIRO_DIR}}/specs/user-api/design.md
 **Command**: `/kiro:steering-custom`
 
 **Prompt Example**:
+
 ```
 Create domain-specific steering for REST API standards:
 - Versioning strategy
@@ -1089,7 +1161,7 @@ Create domain-specific steering for REST API standards:
 <details>
 <summary><strong>Complete API Standards Steering Example</strong></summary>
 
-```markdown
+````markdown
 # API Standards
 
 ## Purpose
@@ -1105,6 +1177,7 @@ This steering document defines REST API standards for all backend services in th
 **Pattern**: `https://{{domain}}/api/{{version}}/{{resource}}`
 
 **Examples**:
+
 - `https://api.example.com/api/v1/users`
 - `https://api.example.com/api/v1/orders/:id`
 
@@ -1115,16 +1188,19 @@ This steering document defines REST API standards for all backend services in th
 **Version Format**: `/v1`, `/v2`, `/v3`
 
 **Deprecation Policy**:
+
 - New version announcement: Minimum 3 months notice
 - Support period: 6 months after new version release
 - Sunset timeline: Communicated via API response headers
 
 **Version Headers**:
+
 ```http
 X-API-Version: v1
 X-API-Deprecated: true
 X-API-Sunset: 2024-12-31
 ```
+````
 
 ---
 
@@ -1132,13 +1208,13 @@ X-API-Sunset: 2024-12-31
 
 **Use Standard Semantics**:
 
-| Method | Usage | Idempotent | Request Body | Response Body |
-|--------|-------|-----------|--------------|---------------|
-| GET | Retrieve resource(s) | Yes | No | Yes |
-| POST | Create new resource | No | Yes | Yes |
-| PUT | Update entire resource | Yes | Yes | Yes |
-| PATCH | Partial update | No | Yes | Yes |
-| DELETE | Remove resource | Yes | No | No (204) |
+| Method | Usage                  | Idempotent | Request Body | Response Body |
+| ------ | ---------------------- | ---------- | ------------ | ------------- |
+| GET    | Retrieve resource(s)   | Yes        | No           | Yes           |
+| POST   | Create new resource    | No         | Yes          | Yes           |
+| PUT    | Update entire resource | Yes        | Yes          | Yes           |
+| PATCH  | Partial update         | No         | Yes          | Yes           |
+| DELETE | Remove resource        | Yes        | No           | No (204)      |
 
 **Safe Methods** (no side effects): GET, HEAD, OPTIONS
 
@@ -1149,12 +1225,14 @@ X-API-Sunset: 2024-12-31
 ### Resource Naming
 
 **Rules**:
+
 - Use plural nouns: `/users`, `/orders`, `/products`
 - Use kebab-case for multi-word resources: `/user-profiles`
 - Avoid verbs in URLs: `/users/123` not `/getUser/123`
 - Use sub-resources for relationships: `/users/123/orders`
 
 **Good Examples**:
+
 ```
 GET /api/v1/users
 POST /api/v1/users
@@ -1165,6 +1243,7 @@ GET /api/v1/users/123/orders
 ```
 
 **Bad Examples**:
+
 ```
 GET /api/v1/getUsers          # No verbs
 POST /api/v1/user             # Use plural
@@ -1186,6 +1265,7 @@ GET /api/v1/user_profiles     # Use kebab-case
 ### JWT Token Structure
 
 **Header**:
+
 ```json
 {
   "alg": "RS256",
@@ -1194,6 +1274,7 @@ GET /api/v1/user_profiles     # Use kebab-case
 ```
 
 **Payload**:
+
 ```json
 {
   "sub": "user_id",
@@ -1205,6 +1286,7 @@ GET /api/v1/user_profiles     # Use kebab-case
 ```
 
 **Token Expiration**:
+
 - Access Token: 15 minutes
 - Refresh Token: 7 days
 
@@ -1217,6 +1299,7 @@ Authorization: Bearer {{jwt_token}}
 ### API Key Authentication
 
 **Header**:
+
 ```http
 X-API-Key: {{api_key}}
 ```
@@ -1232,6 +1315,7 @@ X-API-Key: {{api_key}}
 **Content Type**: `application/json`
 
 **Headers**:
+
 ```http
 Content-Type: application/json
 Accept: application/json
@@ -1240,6 +1324,7 @@ X-Request-ID: {{uuid}}
 ```
 
 **Body Structure**:
+
 ```json
 {
   "field1": "value",
@@ -1253,6 +1338,7 @@ X-Request-ID: {{uuid}}
 ### Response Format
 
 **Success Response (200, 201)**:
+
 ```json
 {
   "data": {
@@ -1268,6 +1354,7 @@ X-Request-ID: {{uuid}}
 ```
 
 **List Response (200)**:
+
 ```json
 {
   "data": [
@@ -1290,6 +1377,7 @@ X-Request-ID: {{uuid}}
 ```
 
 **Empty Response (204)**:
+
 - No body
 - Used for DELETE success
 
@@ -1300,6 +1388,7 @@ X-Request-ID: {{uuid}}
 ### Error Response Structure
 
 **Standard Format**:
+
 ```json
 {
   "error": {
@@ -1320,12 +1409,14 @@ X-Request-ID: {{uuid}}
 ### HTTP Status Codes
 
 **Success (2xx)**:
+
 - `200 OK`: Request succeeded
 - `201 Created`: Resource created
 - `202 Accepted`: Async operation started
 - `204 No Content`: Success with no response body
 
 **Client Errors (4xx)**:
+
 - `400 Bad Request`: Invalid request syntax or validation error
 - `401 Unauthorized`: Missing or invalid authentication
 - `403 Forbidden`: Authenticated but insufficient permissions
@@ -1335,6 +1426,7 @@ X-Request-ID: {{uuid}}
 - `429 Too Many Requests`: Rate limit exceeded
 
 **Server Errors (5xx)**:
+
 - `500 Internal Server Error`: Unexpected server error
 - `502 Bad Gateway`: Upstream service error
 - `503 Service Unavailable`: Temporary unavailability
@@ -1345,6 +1437,7 @@ X-Request-ID: {{uuid}}
 **Format**: `CATEGORY_SPECIFIC_ERROR`
 
 **Examples**:
+
 - `VALIDATION_REQUIRED_FIELD`: Required field missing
 - `VALIDATION_INVALID_FORMAT`: Invalid field format
 - `AUTH_INVALID_TOKEN`: JWT token invalid or expired
@@ -1360,14 +1453,17 @@ X-Request-ID: {{uuid}}
 ### Rate Limit Policy
 
 **Authenticated Users**:
+
 - 1000 requests per hour
 - 100 requests per minute
 
 **Unauthenticated**:
+
 - 100 requests per hour
 - 10 requests per minute
 
 **Rate Limit Headers**:
+
 ```http
 X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 995
@@ -1380,6 +1476,7 @@ Retry-After: 3600
 **Status**: `429 Too Many Requests`
 
 **Body**:
+
 ```json
 {
   "error": {
@@ -1397,11 +1494,13 @@ Retry-After: 3600
 ### Query Parameters
 
 **Offset-based**:
+
 ```
 GET /api/v1/users?page=1&limit=20
 ```
 
 **Cursor-based** (for large datasets):
+
 ```
 GET /api/v1/users?cursor={{cursor}}&limit=20
 ```
@@ -1422,16 +1521,19 @@ See "List Response" in Request/Response Format section above.
 ### Filter Syntax
 
 **Simple Filter**:
+
 ```
 GET /api/v1/users?status=active
 ```
 
 **Advanced Filter**:
+
 ```
 GET /api/v1/users?filter[status]=active&filter[createdAt][gte]=2024-01-01
 ```
 
 **Operators**:
+
 - `eq`: Equals
 - `ne`: Not equals
 - `gt`: Greater than
@@ -1448,6 +1550,7 @@ GET /api/v1/users?sort=createdAt,-updatedAt
 ```
 
 **Rules**:
+
 - Prefix `-` for descending order
 - Multiple fields comma-separated
 - Default: ascending order
@@ -1457,11 +1560,13 @@ GET /api/v1/users?sort=createdAt,-updatedAt
 ## Field Selection
 
 **Sparse Fieldsets**:
+
 ```
 GET /api/v1/users?fields=id,name,email
 ```
 
 **Include Related Resources**:
+
 ```
 GET /api/v1/users?include=profile,orders
 ```
@@ -1475,6 +1580,7 @@ GET /api/v1/users?include=profile,orders
 **Format**: `{{resource}}.{{action}}`
 
 **Examples**:
+
 - `user.created`
 - `user.updated`
 - `user.deleted`
@@ -1498,16 +1604,18 @@ GET /api/v1/users?include=profile,orders
 ### Security
 
 **HMAC Signature**:
+
 ```http
 X-Webhook-Signature: sha256={{signature}}
 ```
 
 **Verification**:
+
 ```javascript
 const signature = crypto
-  .createHmac('sha256', secret)
+  .createHmac("sha256", secret)
   .update(JSON.stringify(payload))
-  .digest('hex');
+  .digest("hex");
 ```
 
 ---
@@ -1517,6 +1625,7 @@ const signature = crypto
 ### Idempotency Keys
 
 **Header**:
+
 ```http
 Idempotency-Key: {{uuid}}
 ```
@@ -1524,6 +1633,7 @@ Idempotency-Key: {{uuid}}
 **Usage**: POST, PATCH requests for critical operations
 
 **Behavior**:
+
 - Same key within 24 hours → return cached response
 - Different key → process as new request
 
@@ -1553,6 +1663,7 @@ X-API-Replacement: /api/v2/users
 ### OpenAPI/Swagger
 
 **All APIs must**:
+
 - Provide OpenAPI 3.0 spec
 - Include examples for all endpoints
 - Document all error codes
@@ -1569,6 +1680,7 @@ X-API-Replacement: /api/v2/users
 ### API Testing Requirements
 
 **Every endpoint must have**:
+
 - Unit tests for business logic
 - Integration tests for API contracts
 - End-to-end tests for critical paths
@@ -1591,6 +1703,7 @@ X-API-Replacement: /api/v2/users
 ### Logging
 
 **Request Logging**:
+
 ```json
 {
   "timestamp": "2024-01-01T00:00:00Z",
@@ -1604,6 +1717,7 @@ X-API-Replacement: /api/v2/users
 ```
 
 **Error Logging**:
+
 ```json
 {
   "timestamp": "2024-01-01T00:00:00Z",
@@ -1645,12 +1759,14 @@ X-API-Replacement: /api/v2/users
 ### Breaking Changes
 
 **Definition**:
+
 - Removing fields
 - Changing field types
 - Changing URL structure
 - Removing endpoints
 
 **Process**:
+
 1. Announce via changelog
 2. Add deprecation headers
 3. Provide migration guide
@@ -1659,12 +1775,14 @@ X-API-Replacement: /api/v2/users
 ### Non-Breaking Changes
 
 **Examples**:
+
 - Adding optional fields
 - Adding new endpoints
 - Adding new query parameters
 
 **Process**: Can deploy immediately, document in changelog
-```
+
+````
 
 </details>
 
@@ -1736,7 +1854,7 @@ X-API-Replacement: /api/v2/users
   "roles": ["admin"],
   "permissions": ["read:users"]
 }
-```
+````
 
 **Signing Algorithm**: RS256 (asymmetric)
 
@@ -1757,7 +1875,8 @@ X-API-Replacement: /api/v2/users
 **Identity Providers**: Okta, Auth0, Azure AD
 
 **Logout**: Implement SLO (Single Logout)
-```
+
+````
 
 </details>
 
@@ -1798,9 +1917,10 @@ describe('ComponentName', () => {
     });
   });
 });
-```
+````
 
 **Mocking Strategy**:
+
 - Mock external dependencies
 - Use test doubles for databases
 - Avoid mocking internal code
@@ -1822,6 +1942,7 @@ describe('ComponentName', () => {
 **Parallel Execution**: Yes
 
 **Critical Paths**:
+
 - User registration and login
 - Core business workflows
 - Payment flows
@@ -1837,6 +1958,7 @@ describe('ComponentName', () => {
 ## Continuous Integration
 
 **CI Pipeline**:
+
 1. Lint
 2. Unit tests
 3. Integration tests
@@ -1847,7 +1969,8 @@ describe('ComponentName', () => {
 **Failure Handling**: Block merge on failure
 
 **Test Reporting**: Publish coverage reports
-```
+
+````
 
 </details>
 
@@ -1888,11 +2011,12 @@ describe('ComponentName', () => {
     "traceId": "uuid"
   }
 }
-```
+````
 
 ## Error Logging
 
 **Log Levels**:
+
 - DEBUG: Diagnostic information
 - INFO: Normal operations
 - WARN: Recoverable issues
@@ -1900,6 +2024,7 @@ describe('ComponentName', () => {
 - FATAL: Critical failures
 
 **Structured Logging**:
+
 ```json
 {
   "timestamp": "ISO 8601",
@@ -1920,11 +2045,13 @@ describe('ComponentName', () => {
 ## Exception Handling
 
 **Try-Catch Blocks**:
+
 - Catch specific exceptions
 - Avoid empty catch blocks
 - Always log errors
 
 **Error Boundaries** (React):
+
 ```javascript
 class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
@@ -1943,26 +2070,31 @@ class ErrorBoundary extends React.Component {
 ## Retry Logic
 
 **Retry Policy**:
+
 - Transient failures: Retry with exponential backoff
 - Non-transient: Fail immediately
 
 **Retryable Errors**:
+
 - Network timeouts
 - 5xx server errors
 - Rate limit errors (429)
 
 **Non-Retryable**:
+
 - 4xx client errors (except 429)
 - Authentication failures
 
 ## Circuit Breaker
 
 **Configuration**:
+
 - Failure threshold: 50%
 - Timeout: 30 seconds
 - Reset timeout: 60 seconds
 
 **States**:
+
 - Closed: Normal operation
 - Open: Fail fast
 - Half-Open: Test recovery
@@ -1972,12 +2104,14 @@ class ErrorBoundary extends React.Component {
 **Tools**: Sentry, Datadog, New Relic
 
 **Alerts**:
+
 - Error rate > 1%
 - Critical errors (payment, auth)
 - Repeated failures
 
 **On-Call**: PagerDuty integration
-```
+
+````
 
 </details>
 
@@ -2015,7 +2149,7 @@ diff \
   <(grep "Error Response" {{KIRO_DIR}}/specs/user-management-api/design.md) \
   <(grep "Error Response" {{KIRO_DIR}}/specs/order-processing-api/design.md)
 # Verify both specs use the same error format
-```
+````
 
 ---
 
@@ -2024,11 +2158,13 @@ diff \
 ### Custom Templates Not Reflected
 
 **Check Items**:
+
 - File path: Is it placed in `{{KIRO_DIR}}/settings/templates/specs/`?
 - Required structure: Are numbering patterns maintained (`### ... N:`, `1.`, `- [ ] N.`)?
 - Markdown syntax: Are heading levels and code blocks correct?
 
 **Solution**: Return to defaults and gradually re-customize
+
 ```bash
 npx k-sdd@latest --overwrite=force
 ```
@@ -2038,6 +2174,7 @@ npx k-sdd@latest --overwrite=force
 **Cause**: Confusion between roles of `templates/` (output structure) and `rules/` (AI judgment criteria)
 
 **Solution**:
+
 - Template: Define section structure and format
 - Rules: Include strong expressions like "MUST", "NEVER" with 3+ specific examples
 
@@ -2050,6 +2187,7 @@ npx k-sdd@latest --overwrite=force
 ### Different Templates Across Teams
 
 **Solution**: Manage `{{KIRO_DIR}}/settings/` with git
+
 ```bash
 git add {{KIRO_DIR}}/settings/
 git commit -m "Add team-wide templates"
@@ -2070,7 +2208,7 @@ git commit -m "Add team-wide templates"
 
 - Deleting required structure (numbering, checkboxes)
 - Ambiguous rules ("should", "consider")
-- Templates exceeding 1000 lines
+- Templates exceeding 1500 lines
 - Committing without testing
 
 ---
@@ -2080,6 +2218,7 @@ git commit -m "Add team-wide templates"
 ### 1. Determine Customization Priority
 
 **Recommended Order**:
+
 1. **requirements.md** - Requirements definition that is the foundation of everything
 2. **design.md** - Design document with high review frequency
 3. **tasks.md** - Most used in implementation phase
