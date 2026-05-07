@@ -9,6 +9,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.0.7] - 2026-05-07
+
+### Added
+
+- Document the interactive wizard in the root README, the package README (English), and the package README (Korean) so first-time users see it during the Quick Start instead of needing to read `--help`
+- Attach an npm provenance attestation to publishes via `npm publish --provenance`, surfacing a verifiable supply-chain badge on the package page
+
+### Changed
+
+- Make the `Publish Package` workflow idempotent: skip `npm publish` when the version in `package.json` is already on the registry, so re-running the workflow no longer fails with "cannot publish over the previously published versions"
+- Upgrade `actions/checkout` and `actions/setup-node` to v5 across `publish.yml`, `claude.yml`, and `claude-dispatch.yml`, and bump the Publish workflow's runtime Node from 20 to 24 ahead of the GitHub-enforced Node 24 cutover
+
 ## [3.0.6] - 2026-05-07
 
 ### Added

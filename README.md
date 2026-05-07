@@ -47,11 +47,14 @@ cd your-project
 npx k-sdd@latest
 ```
 
-The default installs **Claude Code Skills** with English docs. To pick another agent or language:
+When run without flags from a TTY, k-sdd starts an **interactive wizard** that prompts only for the options you did not provide on the command line: agent, documentation language, spec directory, template profile, backup, and a final confirmation before any files are written. Pass `--yes` (`-y`) to skip every prompt and accept defaults. In CI or non-TTY environments, prompts auto-skip.
+
+The default installs **Claude Code Skills** with English docs. To pick another agent or language non-interactively:
 
 ```bash
 npx k-sdd@latest --codex-skills --lang ko      # Codex, Korean
 npx k-sdd@latest --cursor-skills --lang zh-TW  # Cursor IDE, Traditional Chinese
+npx k-sdd@latest --claude-skills --lang en --yes  # fully unattended, all defaults filled
 ```
 
 Supports 8 AI coding agents (Claude Code and Codex stable; Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, and Antigravity in beta) and 13 languages. See [Supported Agents](#supported-agents) for the full list.

@@ -43,11 +43,14 @@ cd your-project
 npx k-sdd@latest
 ```
 
-기본값으로 **Claude Code Skills**와 영어 문서가 설치된다. 다른 에이전트나 언어를 지정할 경우:
+플래그 없이 TTY 환경에서 실행하면 **인터랙티브 위저드**가 시작되어, 명령행에서 지정하지 않은 항목만 차례로 묻는다 — 에이전트, 문서 언어, 스펙 디렉터리, 템플릿 프로파일, 백업 여부, 그리고 파일 쓰기 직전의 최종 확인. 모든 프롬프트를 건너뛰고 기본값으로 진행하려면 `--yes`(`-y`)를 사용. CI나 비-TTY 환경에서는 프롬프트가 자동으로 스킵된다.
+
+기본값으로 **Claude Code Skills**와 영어 문서가 설치된다. 다른 에이전트나 언어를 비대화식으로 지정할 경우:
 
 ```bash
 npx k-sdd@latest --codex-skills --lang ko      # Codex, 한국어
 npx k-sdd@latest --cursor-skills --lang zh-TW  # Cursor IDE, 번체 중국어
+npx k-sdd@latest --claude-skills --lang en --yes  # 완전 무인, 모든 기본값 자동 적용
 ```
 
 8개의 AI coding agent (Claude Code와 Codex는 stable, Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity는 beta)와 13개 언어를 지원한다. 전체 목록은 [지원 에이전트](#지원-에이전트)를 참조.
