@@ -77,6 +77,29 @@ export const promptChoice = async <T>(
   }
 };
 
+export const promptText = async (
+  message: string,
+  defaultValue?: string,
+): Promise<string> => {
+  if (!isInteractive()) throw new Error('TTY required for interactive prompts');
+  const rl = readline.createInterface({ input, output });
+  try {
+    const suffix = defaultValue !== undefined ? ` (Enter for "${defaultValue}")` : '';
+    while (true) {
+      const ans = await rl.question(`${colors.cyan(message)}${suffix}: `);
+      const trimmed = ans.trim();
+      if (!trimmed) {
+        if (defaultValue !== undefined) return defaultValue;
+        output.write(`${colors.yellow('A value is required.')}\n`);
+        continue;
+      }
+      return trimmed;
+    }
+  } finally {
+    rl.close();
+  }
+};
+
 export const promptConfirm = async (message: string, defaultYes = true): Promise<boolean> => {
   if (!isInteractive()) throw new Error('TTY required for interactive prompts');
   const rl = readline.createInterface({ input, output });

@@ -9,6 +9,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.0.6] - 2026-05-07
+
+### Added
+
+- Add full interactive wizard mode for the installer. When run from a TTY without `--yes`, k-sdd now prompts for any options not provided on the command line: language (13 options), spec directory, template profile (full/minimal), backup, and a final "Proceed with installation?" confirmation after the plan summary
+- Add `promptText` helper in `src/cli/ui/prompt.ts` for text input with default-value fallback
+- Add `src/cli/wizard.ts` exposing `ensureLanguageSelection`, `ensureKiroDirSelection`, `ensureProfileSelection`, `ensureBackupSelection`, and `confirmFinalProceed`
+
+### Changed
+
+- `ensureAgentSelection` now honors `--yes` and skips the agent picker, returning the default agent for fully non-interactive runs
+- Update `--help` to document the interactive wizard behavior alongside the existing flags
+
 ## [3.0.5] - 2026-04-06
 
 ### Changed

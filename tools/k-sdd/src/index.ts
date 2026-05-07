@@ -18,6 +18,13 @@ import { determineCategoryPolicies, printSummary, summarizeCategories, type Cate
 import { defaultIO, type CliIO } from './cli/io.js';
 import { colors, formatBox, formatError, formatHeading, formatSuccess, formatWarning } from './cli/ui/colors.js';
 import { isInteractive, promptChoice, promptConfirm } from './cli/ui/prompt.js';
+import {
+  confirmFinalProceed,
+  ensureBackupSelection,
+  ensureKiroDirSelection,
+  ensureLanguageSelection,
+  ensureProfileSelection,
+} from './cli/wizard.js';
 
 const agentKeys = agentList;
 const aliasFlags = Array.from(new Set(agentKeys.flatMap((key) => getAgentDefinition(key).aliasFlags)));
@@ -43,7 +50,12 @@ ${agentAliasLine}  --lang <ko|en|zh-TW|zh|es|pt|de|fr|ru|it|ko|ar|el>  Language
   -h, --help                                  Show help
   -v, --version                               Show version
 
-Note: In non-TTY environments, prompt mode falls back to skip.`;
+Interactive mode:
+  When run from a TTY without --yes, k-sdd prompts for any options you did
+  not provide on the command line: agent, language, spec directory, profile,
+  backup, and a final confirmation before writing files. Use --yes (-y) to
+  skip every prompt and accept defaults. In non-TTY environments, prompt
+  mode falls back to skip.`;
 
 const resolveManifestPath = async (
   resolvedAgent: string,
@@ -169,6 +181,13 @@ const runPlanExecution = async (
     const summaries = await summarizeCategories(operations);
     printSummary(summaries, resolvedConfig, io);
 
+    const proceed = await confirmFinalProceed(resolvedConfig.yes, io);
+    if (!proceed) {
+      io.log(formatWarning('  Installation cancelled.'));
+      io.log('');
+      return 0;
+    }
+
     const categoryPolicies: CategoryPolicyMap =
       resolvedConfig.effectiveOverwrite === 'force'
         ? {}
@@ -225,7 +244,9 @@ export const runCli = async (
     return 1;
   }
 
-  parsedArgs.agent = await ensureAgentSelection(parsedArgs.agent ?? loadedConfig.agent, io);
+  const yes = !!parsedArgs.yes;
+
+  parsedArgs.agent = await ensureAgentSelection(parsedArgs.agent ?? loadedConfig.agent, yes, io);
 
   if (parsedArgs.agent === 'codex') {
     io.log('');
@@ -237,6 +258,14 @@ export const runCli = async (
     io.log('');
     return 1;
   }
+
+  parsedArgs.lang = await ensureLanguageSelection(parsedArgs.lang ?? loadedConfig.lang, yes, io);
+  const kiroDirAnswer = await ensureKiroDirSelection(parsedArgs.kiroDir ?? loadedConfig.kiroDir, yes, io);
+  if (kiroDirAnswer !== undefined) parsedArgs.kiroDir = kiroDirAnswer;
+  const profileAnswer = await ensureProfileSelection(parsedArgs.profile, yes, io);
+  if (profileAnswer !== undefined) parsedArgs.profile = profileAnswer;
+  const backupAnswer = await ensureBackupSelection(parsedArgs.backup, yes, io);
+  if (typeof backupAnswer !== 'undefined') parsedArgs.backup = backupAnswer;
 
   const resolved = mergeConfigAndArgs(parsedArgs, loadedConfig, runtime);
 
